@@ -157,3 +157,14 @@ overrides:
   # drizzle-kit uses esbuild internally on an older version that's vulnerable, this overrides it
   "@esbuild-kit/esm-loader": "npm:tsx@^4.21.0"
   esbuild: "0.27.3"
+  # Security vulnerability fixes
+  "brace-expansion@>=2.0.0 <2.0.3": "2.0.3"
+  # lodash 4.18.0 is the only available security fix for GHSA-r5fr-rjxr-66jc.
+  # npm marks 4.18.0 as deprecated ("bad release") and suggests 4.17.21, but
+  # 4.17.21 predates the vulnerability fix and still fails the security advisory.
+  # 4.18.0 is safe to use and no higher 4.x release exists.
+  "lodash@>=4.0.0 <=4.17.23": "4.18.0"
+  "path-to-regexp@>=8.0.0 <8.4.0": "8.4.0"
+  "picomatch@>=2.0.0 <2.3.2": "2.3.2"
+  "picomatch@>=4.0.0 <4.0.4": "4.0.4"
+  "yaml@>=2.0.0 <2.8.3": "2.8.3"
