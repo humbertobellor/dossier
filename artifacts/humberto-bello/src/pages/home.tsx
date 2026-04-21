@@ -281,20 +281,6 @@ export default function Home() {
                   style={{ objectPosition: "center top" }}
                   data-testid="hero-headshot"
                 />
-                {/* Credential badge on photo */}
-                <div
-                  className="absolute -bottom-4 -right-4 flex items-center gap-2 px-4 py-2.5 rounded-xl border shadow-lg text-xs font-semibold"
-                  style={{
-                    background: "rgba(13,24,33,0.92)",
-                    borderColor: "rgba(86,181,163,0.35)",
-                    color: teal,
-                    backdropFilter: "blur(8px)",
-                  }}
-                  data-testid="hero-credential-badge"
-                >
-                  <Shield size={13} />
-                  US Citizen &mdash; No Sponsorship
-                </div>
               </div>
             </motion.div>
 
@@ -409,6 +395,26 @@ export default function Home() {
               </motion.button>
             </motion.div>
 
+          </div>
+
+          {/* Hero footer — credential badge */}
+          <div className="absolute bottom-0 inset-x-0 flex justify-center pb-6">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 0.5 }}
+              className="flex items-center gap-2 px-5 py-2 rounded-full border text-xs font-semibold"
+              style={{
+                background: "rgba(13,24,33,0.70)",
+                borderColor: "rgba(86,181,163,0.25)",
+                color: "rgba(210,225,230,0.60)",
+                backdropFilter: "blur(8px)",
+              }}
+              data-testid="hero-credential-badge"
+            >
+              <Shield size={12} style={{ color: teal }} />
+              US Citizen &mdash; No Sponsorship Required
+            </motion.div>
           </div>
         </motion.div>
       </section>
