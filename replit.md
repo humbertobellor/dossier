@@ -16,6 +16,17 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
 
+## Artifacts
+
+### Humberto Bello - Professional Dossier (`artifacts/humberto-bello`)
+- **Type**: React + Vite (presentation/portfolio site)
+- **Preview path**: `/` (root)
+- **Description**: Personal professional dossier website for Humberto "Bert" Bello, a Principal Architect & Engineering Leader
+- **Content**: Hero section, professional skills, selected experience, clients/employers, CTA
+- **Source material**: Converted from `attached_assets/Humberto_Bello_Dossier_1776738383392.pptx`
+- **Theme color**: Teal `#56B5A3` on dark navy background
+- **No backend** — pure static frontend site
+
 ## Key Commands
 
 - `pnpm run typecheck` — full typecheck across all packages
