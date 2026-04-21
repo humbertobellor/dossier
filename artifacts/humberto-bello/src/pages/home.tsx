@@ -15,6 +15,7 @@ import {
   Award,
   ArrowRight,
 } from "lucide-react";
+import headshot from "@assets/AC107831-0872-4D97-A455-49E096D38B2F_1776739603885.png";
 
 const teal = "#56B5A3";
 
@@ -232,146 +233,183 @@ export default function Home() {
       <section
         id="hero"
         ref={heroRef}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #0d1821 0%, #1a2a38 50%, #0f2220 100%)" }}
+        className="relative min-h-screen flex items-center overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #0d1821 0%, #1a2a38 55%, #0f2220 100%)" }}
         data-testid="section-hero"
       >
-        {/* Decorative circles */}
+        {/* Decorative glows */}
         <div
-          className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full opacity-10 blur-3xl"
+          className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full opacity-[0.07] blur-3xl pointer-events-none"
           style={{ background: teal }}
         />
         <div
-          className="absolute bottom-1/4 left-1/4 w-64 h-64 rounded-full opacity-8 blur-3xl"
+          className="absolute bottom-0 left-1/3 w-80 h-80 rounded-full opacity-[0.06] blur-3xl pointer-events-none"
           style={{ background: "#2a7ecb" }}
         />
 
         <motion.div
           style={{ opacity: heroOpacity, y: heroY }}
-          className="relative z-10 max-w-4xl mx-auto px-6 text-center"
+          className="relative z-10 w-full max-w-6xl mx-auto px-6 py-28 md:py-0 md:min-h-screen flex items-center"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {/* Name Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 text-sm font-medium border"
-              style={{
-                background: "rgba(86,181,163,0.10)",
-                borderColor: "rgba(86,181,163,0.30)",
-                color: teal,
-              }}
-              data-testid="hero-badge"
-            >
-              <Shield size={14} />
-              US Citizen &mdash; No Sponsorship Required
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center w-full">
 
-            <h1
-              className="font-serif text-6xl md:text-8xl font-bold mb-4 leading-tight"
-              style={{ color: "#fff" }}
-              data-testid="hero-name"
+            {/* LEFT — Photo */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              className="flex justify-center md:justify-end"
+              data-testid="hero-photo-col"
             >
-              Humberto{" "}
-              <span style={{ color: teal }}>&ldquo;Bert&rdquo;</span>
-              <br />
-              Bello
-            </h1>
-
-            <p
-              className="text-xl md:text-2xl font-light mb-10 max-w-2xl mx-auto leading-relaxed"
-              style={{ color: "rgba(210,225,230,0.80)" }}
-              data-testid="hero-title"
-            >
-              Principal Architect &amp; Engineering Leader
-            </p>
-
-            {/* Stats Row */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-2xl mx-auto">
-              {[
-                { value: "20+", label: "Years in Architecture" },
-                { value: "15+", label: "Years Leading Teams" },
-                { value: "3", label: "Continents" },
-                { value: "19M+", label: "Subscribers Scaled" },
-              ].map((stat) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.6 }}
-                  className="rounded-xl p-4 border text-center"
+              <div className="relative">
+                {/* Teal glow ring behind photo */}
+                <div
+                  className="absolute inset-0 rounded-3xl blur-2xl scale-110 opacity-30"
+                  style={{ background: `linear-gradient(135deg, ${teal}, #2a7ecb)` }}
+                />
+                {/* Decorative border frame */}
+                <div
+                  className="absolute -inset-1 rounded-3xl"
                   style={{
-                    background: "rgba(86,181,163,0.06)",
-                    borderColor: "rgba(86,181,163,0.20)",
+                    background: `linear-gradient(135deg, rgba(86,181,163,0.5) 0%, rgba(42,126,203,0.3) 50%, rgba(86,181,163,0.2) 100%)`,
                   }}
-                  data-testid={`stat-${stat.label}`}
-                >
-                  <div className="text-2xl font-bold font-serif" style={{ color: teal }}>
-                    {stat.value}
-                  </div>
-                  <div className="text-xs mt-1" style={{ color: "rgba(210,225,230,0.60)" }}>
-                    {stat.label}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Summary bullets */}
-            <div className="flex flex-col gap-3 items-start max-w-2xl mx-auto text-left mb-12">
-              {[
-                "20+ years of Architecture & Engineering delivering customer-facing digital experiences, integration, security and enterprise-scale modernization.",
-                "15+ years leading global engineering teams in agile environments with end-to-end delivery accountability.",
-                "Hands-on experience in Gen AI and Agentic patterns, event-driven architectures, cloud-native engineering (AWS, GCP, Azure), security and UI/UX standards.",
-              ].map((point, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 + i * 0.15, duration: 0.5 }}
-                  className="flex items-start gap-3"
-                  data-testid={`hero-bullet-${i}`}
-                >
-                  <div
-                    className="w-1.5 h-1.5 rounded-full mt-2.5 shrink-0"
-                    style={{ background: teal }}
-                  />
-                  <p className="text-sm leading-relaxed" style={{ color: "rgba(210,225,230,0.75)" }}>
-                    {point}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Compliance Tags */}
-            <div className="flex flex-wrap gap-2 justify-center mb-12">
-              {["GDPR", "HIPAA", "SOX", "SOC", "AWS", "GCP", "Azure", "Gen AI"].map((tag) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1 rounded-full text-xs font-semibold border"
+                />
+                <img
+                  src={headshot}
+                  alt="Humberto Bert Bello"
+                  className="relative w-72 h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 object-cover rounded-3xl"
+                  style={{ objectPosition: "center top" }}
+                  data-testid="hero-headshot"
+                />
+                {/* Credential badge on photo */}
+                <div
+                  className="absolute -bottom-4 -right-4 flex items-center gap-2 px-4 py-2.5 rounded-xl border shadow-lg text-xs font-semibold"
                   style={{
-                    background: "rgba(86,181,163,0.08)",
-                    borderColor: "rgba(86,181,163,0.25)",
+                    background: "rgba(13,24,33,0.92)",
+                    borderColor: "rgba(86,181,163,0.35)",
                     color: teal,
+                    backdropFilter: "blur(8px)",
                   }}
-                  data-testid={`tag-${tag}`}
+                  data-testid="hero-credential-badge"
                 >
-                  {tag}
-                </span>
-              ))}
-            </div>
+                  <Shield size={13} />
+                  US Citizen &mdash; No Sponsorship
+                </div>
+              </div>
+            </motion.div>
 
-            <motion.button
-              onClick={() => scrollTo("skills")}
-              animate={{ y: [0, 6, 0] }}
-              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-              className="flex items-center gap-2 mx-auto text-sm font-medium"
-              style={{ color: "rgba(210,225,230,0.50)" }}
-              data-testid="hero-scroll-hint"
+            {/* RIGHT — Content */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              data-testid="hero-content-col"
             >
-              Explore Profile <ChevronDown size={16} />
-            </motion.button>
-          </motion.div>
+              <h1
+                className="font-serif font-bold leading-tight mb-3"
+                style={{ color: "#fff", fontSize: "clamp(2.4rem, 5vw, 3.8rem)" }}
+                data-testid="hero-name"
+              >
+                Humberto{" "}
+                <span style={{ color: teal }}>&ldquo;Bert&rdquo;</span>{" "}
+                Bello
+              </h1>
+
+              <p
+                className="text-lg font-light mb-8 leading-relaxed"
+                style={{ color: "rgba(210,225,230,0.75)" }}
+                data-testid="hero-title"
+              >
+                Principal Architect &amp; Engineering Leader
+              </p>
+
+              {/* Stats Row */}
+              <div className="grid grid-cols-2 gap-3 mb-8">
+                {[
+                  { value: "20+", label: "Years in Architecture" },
+                  { value: "15+", label: "Years Leading Teams" },
+                  { value: "3", label: "Continents" },
+                  { value: "19M+", label: "Subscribers Scaled" },
+                ].map((stat, i) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35 + i * 0.08, duration: 0.5 }}
+                    className="rounded-xl p-3.5 border"
+                    style={{
+                      background: "rgba(86,181,163,0.06)",
+                      borderColor: "rgba(86,181,163,0.18)",
+                    }}
+                    data-testid={`stat-${stat.label}`}
+                  >
+                    <div className="text-xl font-bold font-serif" style={{ color: teal }}>
+                      {stat.value}
+                    </div>
+                    <div className="text-xs mt-0.5" style={{ color: "rgba(210,225,230,0.55)" }}>
+                      {stat.label}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Summary bullets */}
+              <div className="flex flex-col gap-2.5 mb-8">
+                {[
+                  "20+ years delivering customer-facing digital experiences, integration, security and enterprise-scale modernization.",
+                  "15+ years leading global engineering teams with end-to-end delivery accountability.",
+                  "Hands-on in Gen AI, agentic patterns, event-driven architectures and cloud-native engineering (AWS, GCP, Azure).",
+                ].map((point, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -16 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.55 + i * 0.12, duration: 0.5 }}
+                    className="flex items-start gap-2.5"
+                    data-testid={`hero-bullet-${i}`}
+                  >
+                    <div
+                      className="w-1.5 h-1.5 rounded-full mt-2 shrink-0"
+                      style={{ background: teal }}
+                    />
+                    <p className="text-sm leading-relaxed" style={{ color: "rgba(210,225,230,0.70)" }}>
+                      {point}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Compliance Tags */}
+              <div className="flex flex-wrap gap-1.5 mb-9">
+                {["GDPR", "HIPAA", "SOX", "SOC", "AWS", "GCP", "Azure", "Gen AI"].map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2.5 py-1 rounded-full text-xs font-semibold border"
+                    style={{
+                      background: "rgba(86,181,163,0.07)",
+                      borderColor: "rgba(86,181,163,0.22)",
+                      color: teal,
+                    }}
+                    data-testid={`tag-${tag}`}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              <motion.button
+                onClick={() => scrollTo("skills")}
+                animate={{ y: [0, 5, 0] }}
+                transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+                className="flex items-center gap-2 text-sm font-medium"
+                style={{ color: "rgba(210,225,230,0.45)" }}
+                data-testid="hero-scroll-hint"
+              >
+                Explore Profile <ChevronDown size={15} />
+              </motion.button>
+            </motion.div>
+
+          </div>
         </motion.div>
       </section>
 
