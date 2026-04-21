@@ -219,7 +219,7 @@ export default function Home() {
             ))}
           </div>
           <a
-            href="mailto:humbertl.bello@protonmail.com"
+            href="mailto:humberto.bello@protonmail.com"
             className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:opacity-90"
             style={{ background: teal, color: "#fff" }}
             data-testid="nav-contact"
@@ -631,7 +631,7 @@ export default function Home() {
                 </p>
                 <div className="flex flex-wrap gap-3 justify-center">
                   <a
-                    href="mailto:humbertl.bello@protonmail.com"
+                    href="mailto:humberto.bello@protonmail.com"
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-200 hover:opacity-90"
                     style={{ background: teal, color: "#fff" }}
                     data-testid="cta-email"
