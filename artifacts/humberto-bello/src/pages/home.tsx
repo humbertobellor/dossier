@@ -284,6 +284,34 @@ export default function Home() {
         >
           <div className="w-full md:w-1/2 md:ml-auto px-8 md:px-12 py-28 md:py-0">
 
+            {/* Mobile-only headshot */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="flex justify-center mb-8 md:hidden"
+              data-testid="hero-photo-mobile"
+            >
+              <div className="relative">
+                <div
+                  className="absolute inset-0 rounded-2xl blur-xl scale-110 opacity-40"
+                  style={{ background: `linear-gradient(135deg, ${teal}, #2a7ecb)` }}
+                />
+                <div
+                  className="absolute -inset-1 rounded-2xl"
+                  style={{
+                    background: `linear-gradient(135deg, rgba(86,181,163,0.45) 0%, rgba(42,126,203,0.25) 100%)`,
+                  }}
+                />
+                <img
+                  src={headshot}
+                  alt="Humberto Bert Bello"
+                  className="relative w-48 h-48 object-cover rounded-2xl"
+                  style={{ objectPosition: "center top" }}
+                />
+              </div>
+            </motion.div>
+
             {/* RIGHT — Content */}
             <motion.div
               initial={{ opacity: 0, x: 40 }}
