@@ -103,7 +103,7 @@ const experiences = [
     tags: ["K8s", "Istio", "Apigee", "Spring Boot", "Kafka"],
   },
   {
-    company: "Leasing / Real Estate Platform",
+    company: "RAG & Agentic",
     highlight: "RAG Engine for Contract Management",
     description:
       "Built a RAG engine for Leasing Contract Management productivity. Produced a serverless version for AWS.",
