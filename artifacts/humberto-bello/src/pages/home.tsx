@@ -34,6 +34,9 @@ const skillCategories = [
       "RAG Engines (LangChain, Azure OpenAI, Bedrock)",
       "LLM Integration & Prompt Engineering",
       "Event-Driven Architectures",
+      "Claude Code & Skills: Sonnet, Qwen, Opus",
+      "Co-Pilot, Junie",
+      "Huggingface, Unsloth Studio",
     ],
   },
   {
