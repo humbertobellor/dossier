@@ -106,8 +106,8 @@ const experiences = [
     company: "RAG & Agentic",
     highlight: "RAG Engine for Contract Management",
     description:
-      "Built a RAG engine for Leasing Contract Management productivity. Produced a serverless version for AWS.",
-    tags: ["LangChain", "Python", "React", "Azure OpenAI", "Zilliz", "AWS Bedrock"],
+      "Built a RAG engine for Leasing Contract Management productivity. Produced a serverless version for AWS. Implemented Claude Skills for TDD workflow and a EventStorming facilitator agent.",
+    tags: ["LangChain", "Python", "React", "Azure OpenAI", "Zilliz", "AWS Bedrock", "Claude Code", "QWEN", "Opus", "Sonnet"],
   },
   {
     company: "TracFone / Largest MVNO in USA",
