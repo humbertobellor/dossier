@@ -14,6 +14,12 @@ import {
   Building2,
   Award,
   ArrowRight,
+  BarChart2,
+  Landmark,
+  CreditCard,
+  Smartphone,
+  Activity,
+  ShoppingCart,
 } from "lucide-react";
 import headshot from "@assets/headshot-corp_1776959044728.png";
 
@@ -127,12 +133,12 @@ const experiences = [
 ];
 
 const clients = [
-  { name: "Equifax", category: "Financial Services" },
-  { name: "Fifth Third Bank", category: "Banking" },
-  { name: "FISERV", category: "Fintech" },
-  { name: "TracFone / MVNO", category: "Telecom" },
-  { name: "J&J - Medical Devices", category: "HealthTech" },
-  { name: "Dollar General", category: "Retail & Supply Chain" },
+  { name: "Equifax", category: "Financial Services", icon: BarChart2 },
+  { name: "Fifth Third Bank", category: "Banking", icon: Landmark },
+  { name: "FISERV", category: "Fintech", icon: CreditCard },
+  { name: "TracFone / MVNO", category: "Telecom", icon: Smartphone },
+  { name: "J&J - Medical Devices", category: "HealthTech", icon: Activity },
+  { name: "Dollar General", category: "Retail & Supply Chain", icon: ShoppingCart },
 ];
 
 function FadeInSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
@@ -617,7 +623,7 @@ export default function Home() {
                     className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3"
                     style={{ background: "rgba(86,181,163,0.10)" }}
                   >
-                    <Award size={22} style={{ color: teal }} />
+                    <client.icon size={22} style={{ color: teal }} />
                   </div>
                   <h3 className="font-semibold text-sm mb-1">{client.name}</h3>
                   <p className="text-xs text-muted-foreground">{client.category}</p>
