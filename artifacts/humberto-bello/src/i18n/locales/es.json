@@ -1,0 +1,151 @@
+{
+  "nav": {
+    "about": "Acerca de",
+    "skills": "Habilidades",
+    "experience": "Experiencia",
+    "clients": "Clientes",
+    "getInTouch": "Contáctame"
+  },
+  "hero": {
+    "badge": "Ciudadano Estadounidense — Sin Necesidad de Patrocinio",
+    "title": "Arquitecto Principal & Líder de Ingeniería",
+    "stats": {
+      "architecture": "Años en Arquitectura",
+      "teams": "Años Liderando Equipos",
+      "continents": "Continentes",
+      "subscribers": "Suscriptores Escalados"
+    },
+    "bullets": [
+      "Más de 20 años entregando experiencias digitales centradas en el cliente, integración, seguridad y modernización a escala empresarial.",
+      "Más de 15 años liderando equipos de ingeniería globales con responsabilidad de entrega de extremo a extremo.",
+      "Experiencia práctica en Gen AI, patrones agénticos, arquitecturas orientadas a eventos e ingeniería cloud-native (AWS, GCP, Azure)."
+    ],
+    "scrollHint": "Explorar Perfil"
+  },
+  "skills": {
+    "label": "Especialización",
+    "title": "Habilidades Profesionales",
+    "subtitle": "Dos décadas de experiencia práctica en arquitectura, nube, IA, seguridad y liderazgo de ingeniería global.",
+    "categories": {
+      "ai": {
+        "title": "IA & Tecnologías Emergentes",
+        "items": [
+          "Patrones de IA Generativa y Agéntica",
+          "Motores RAG (LangChain, Azure OpenAI, Bedrock)",
+          "Integración LLM e Ingeniería de Prompts",
+          "Arquitecturas Orientadas a Eventos",
+          "Claude Code & Skills: Sonnet, Qwen, Opus",
+          "Co-Pilot, Junie",
+          "Huggingface, Unsloth Studio"
+        ]
+      },
+      "cloud": {
+        "title": "Nube e Infraestructura",
+        "items": [
+          "AWS (Lambda, Bedrock, OpenSearch, S3, ECS)",
+          "GCP & Azure (OpenAI, Zilliz)",
+          "Kubernetes, Istio, Apigee",
+          "Serverless y Microservicios"
+        ]
+      },
+      "engineering": {
+        "title": "Ingeniería & Arquitectura",
+        "items": [
+          "Arquitectura de Soluciones y Empresarial",
+          "Gestión de Ingeniería: DevSecOps, DORA, XP, SCRUM, SAFe",
+          "Gestión y Diseño de APIs",
+          "Modernización de Plataformas Legadas",
+          "Spring Boot, Kafka, React, Python",
+          "Java, NodeJS, Kotlin, Scala",
+          "Oracle, DynamoDB, MongoDB, PostgreSQL, Redis",
+          "Databricks, Kafka, Cassandra, Apache Camel, Apache NiFi"
+        ]
+      },
+      "security": {
+        "title": "Seguridad & Cumplimiento",
+        "items": [
+          "GDPR", "HIPAA", "SOX", "SOC", "Controles de Seguridad", "Gobernanza InfoSec"
+        ]
+      },
+      "leadership": {
+        "title": "Liderazgo & Entrega",
+        "items": [
+          "Más de 15 Años Liderando Equipos Globales",
+          "Planificación Agile / SAFe PI",
+          "Responsabilidad de Entrega Extremo a Extremo",
+          "Gestión de Stakeholders y Roadmap"
+        ]
+      },
+      "digital": {
+        "title": "Experiencias Digitales",
+        "items": [
+          "Productos Digitales Orientados al Cliente",
+          "Ingeniería de Plataformas Móviles y Web",
+          "Estándares e Implementación UI/UX",
+          "Arquitectura de Integración"
+        ]
+      }
+    }
+  },
+  "experience": {
+    "label": "Trayectoria",
+    "title": "Experiencia Seleccionada",
+    "subtitle": "Una selección de compromisos de alto impacto en transformación empresarial, IA e ingeniería de plataformas.",
+    "entries": [
+      {
+        "company": "Equifax (EFX)",
+        "highlight": "Escalado y Gobernanza de Ingeniería",
+        "description": "Escalé equipos de ingeniería de 8 a 20 personas en 3 países; dirigí 34 sprints y 3 PI Plannings. Lideré el roadmap de producto y la gobernanza en colaboración con stakeholders de Arquitectura, InfoSec e Ingeniería."
+      },
+      {
+        "company": "Empresa de Dispositivos Médicos",
+        "highlight": "Seguridad API para Dispositivos Quirúrgicos",
+        "description": "Implementé gestión de APIs y produje controles de seguridad para microservicios que controlan dispositivos quirúrgicos."
+      },
+      {
+        "company": "RAG & Agéntico",
+        "highlight": "Motor RAG para Gestión de Contratos",
+        "description": "Construí un motor RAG para la productividad en la Gestión de Contratos de Arrendamiento. Produje una versión serverless para AWS. Implementé Claude Skills para flujo de trabajo TDD y un agente facilitador de EventStorming."
+      },
+      {
+        "company": "TracFone / Largest MVNO in USA",
+        "highlight": "Modernización de Plataforma Inalámbrica Móvil",
+        "description": "Modernizé, reconstruí y estandaricé el middleware y el portal para el aprovisionamiento de servicios inalámbricos móviles, escalando de 6M a 19M de suscriptores en 8 marcas."
+      },
+      {
+        "company": "FISERV",
+        "highlight": "Red de Pagos en Tiempo Real",
+        "description": "Proporcioné arquitectura de soluciones y diseño para los requisitos de procesamiento de eventos de una red de pagos en tiempo real, integrando con las APIs de clientes de OpenBanking."
+      },
+      {
+        "company": "Fifth Third Bank",
+        "highlight": "Cartera Digital de Banca Móvil",
+        "description": "Líder técnico — diseñé e implementé la capa de integración y servicios para soportar la cartera digital de banca personal móvil para 2.4 millones de usuarios bancarios móviles mensuales."
+      }
+    ]
+  },
+  "clients": {
+    "label": "Portafolio",
+    "title": "Clientes & Empleadores Seleccionados",
+    "subtitle": "Una trayectoria construida con líderes de la industria en servicios financieros, salud, telecomunicaciones y más.",
+    "categories": {
+      "financialServices": "Servicios Financieros",
+      "banking": "Banca",
+      "fintech": "Fintech",
+      "telecom": "Telecomunicaciones",
+      "healthtech": "HealthTech",
+      "retail": "Retail & Cadena de Suministro"
+    }
+  },
+  "cta": {
+    "badge": "Disponible para Oportunidades",
+    "title": "Construyamos Algo Notable",
+    "subtitle": "Autorizado para trabajar en los Estados Unidos sin patrocinio. Abierto a compromisos senior en arquitectura, liderazgo de ingeniería y consultoría.",
+    "email": "Enviar un Mensaje",
+    "linkedin": "Perfil de LinkedIn"
+  },
+  "footer": {
+    "role": "Arquitecto Principal & Líder de Ingeniería",
+    "location": "Estados Unidos — Ciudadano Estadounidense, Sin Necesidad de Patrocinio"
+  }
+}

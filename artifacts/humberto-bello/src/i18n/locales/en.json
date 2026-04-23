@@ -1,0 +1,151 @@
+{
+  "nav": {
+    "about": "About",
+    "skills": "Skills",
+    "experience": "Experience",
+    "clients": "Clients",
+    "getInTouch": "Get in Touch"
+  },
+  "hero": {
+    "badge": "US Citizen — No Sponsorship Required",
+    "title": "Principal Architect & Engineering Leader",
+    "stats": {
+      "architecture": "Years in Architecture",
+      "teams": "Years Leading Teams",
+      "continents": "Continents",
+      "subscribers": "Subscribers Scaled"
+    },
+    "bullets": [
+      "20+ years delivering customer-facing digital experiences, integration, security and enterprise-scale modernization.",
+      "15+ years leading global engineering teams with end-to-end delivery accountability.",
+      "Hands-on in Gen AI, agentic patterns, event-driven architectures and cloud-native engineering (AWS, GCP, Azure)."
+    ],
+    "scrollHint": "Explore Profile"
+  },
+  "skills": {
+    "label": "Expertise",
+    "title": "Professional Skills",
+    "subtitle": "Two decades of hands-on experience spanning architecture, cloud, AI, security, and global engineering leadership.",
+    "categories": {
+      "ai": {
+        "title": "AI & Emerging Tech",
+        "items": [
+          "Generative AI & Agentic Patterns",
+          "RAG Engines (LangChain, Azure OpenAI, Bedrock)",
+          "LLM Integration & Prompt Engineering",
+          "Event-Driven Architectures",
+          "Claude Code & Skills: Sonnet, Qwen, Opus",
+          "Co-Pilot, Junie",
+          "Huggingface, Unsloth Studio"
+        ]
+      },
+      "cloud": {
+        "title": "Cloud & Infrastructure",
+        "items": [
+          "AWS (Lambda, Bedrock, OpenSearch, S3, ECS)",
+          "GCP & Azure (OpenAI, Zilliz)",
+          "Kubernetes, Istio, Apigee",
+          "Serverless & Microservices"
+        ]
+      },
+      "engineering": {
+        "title": "Engineering & Architecture",
+        "items": [
+          "Solution & Enterprise Architecture",
+          "Engineering Management: DevSecOps, DORA, XP, SCRUM, SAFe",
+          "API Management & Design",
+          "Legacy Platform Modernization",
+          "Spring Boot, Kafka, React, Python",
+          "Java, NodeJS, Kotlin, Scala",
+          "Oracle, DynamoDB, MongoDB, PostgreSQL, Redis",
+          "Databricks, Kafka, Cassandra, Apache Camel, Apache NiFi"
+        ]
+      },
+      "security": {
+        "title": "Security & Compliance",
+        "items": [
+          "GDPR", "HIPAA", "SOX", "SOC", "Security Guardrails", "InfoSec Governance"
+        ]
+      },
+      "leadership": {
+        "title": "Leadership & Delivery",
+        "items": [
+          "15+ Years Global Team Leadership",
+          "Agile / SAFe PI Planning",
+          "End-to-End Delivery Accountability",
+          "Stakeholder & Roadmap Management"
+        ]
+      },
+      "digital": {
+        "title": "Digital Experiences",
+        "items": [
+          "Customer-Facing Digital Products",
+          "Mobile & Web Platform Engineering",
+          "UI/UX Standards & Implementation",
+          "Integration Architecture"
+        ]
+      }
+    }
+  },
+  "experience": {
+    "label": "Track Record",
+    "title": "Selected Experience",
+    "subtitle": "A curated view of high-impact engagements across enterprise transformation, AI, and platform engineering.",
+    "entries": [
+      {
+        "company": "Equifax (EFX)",
+        "highlight": "Engineering Scaling & Governance",
+        "description": "Scaled engineering teams from 8 to 20 across 3 countries; ran 34 sprints and 3 PI Plannings. Led product roadmap and governance partnering with Architecture, InfoSec, and Engineering stakeholders."
+      },
+      {
+        "company": "Medical Device Company",
+        "highlight": "API Security for Surgical Devices",
+        "description": "Implemented API management and produced security guardrails for microservices controlling surgical devices."
+      },
+      {
+        "company": "RAG & Agentic",
+        "highlight": "RAG Engine for Contract Management",
+        "description": "Built a RAG engine for Leasing Contract Management productivity. Produced a serverless version for AWS. Implemented Claude Skills for TDD workflow and a EventStorming facilitator agent."
+      },
+      {
+        "company": "TracFone / Largest MVNO in USA",
+        "highlight": "Mobile Wireless Platform Modernization",
+        "description": "Modernized, rebuilt, and standardized the middleware and portal for Mobile Wireless service provisioning, scaling from 6M to 19M subscribers across 8 brands."
+      },
+      {
+        "company": "FISERV",
+        "highlight": "Real-Time Payment Network",
+        "description": "Provided solution architecture and design for event processing requirements for a real-time payment network, integrating with OpenBanking Customer APIs."
+      },
+      {
+        "company": "Fifth Third Bank",
+        "highlight": "Mobile Banking Wallet",
+        "description": "Technical leader — designed and implemented integration and service layer to support personal Banking Mobile Wallet for 2.4 million monthly mobile banking users."
+      }
+    ]
+  },
+  "clients": {
+    "label": "Portfolio",
+    "title": "Selected Clients & Employers",
+    "subtitle": "A track record built with industry leaders across financial services, healthcare, telecom, and beyond.",
+    "categories": {
+      "financialServices": "Financial Services",
+      "banking": "Banking",
+      "fintech": "Fintech",
+      "telecom": "Telecom",
+      "healthtech": "HealthTech",
+      "retail": "Retail & Supply Chain"
+    }
+  },
+  "cta": {
+    "badge": "Available for Opportunities",
+    "title": "Let's Build Something Remarkable",
+    "subtitle": "Authorized to work in the United States without sponsorship. Open to senior architecture, engineering leadership, and consulting engagements.",
+    "email": "Send a Message",
+    "linkedin": "LinkedIn Profile"
+  },
+  "footer": {
+    "role": "Principal Architect & Engineering Leader",
+    "location": "United States — US Citizen, No Sponsorship Required"
+  }
+}

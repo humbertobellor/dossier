@@ -1,0 +1,151 @@
+{
+  "nav": {
+    "about": "Über mich",
+    "skills": "Fähigkeiten",
+    "experience": "Erfahrung",
+    "clients": "Kunden",
+    "getInTouch": "Kontakt aufnehmen"
+  },
+  "hero": {
+    "badge": "US-Bürger — Keine Arbeitserlaubnis erforderlich",
+    "title": "Leitender Architekt & Engineering-Führungskraft",
+    "stats": {
+      "architecture": "Jahre in der Architektur",
+      "teams": "Jahre als Teamleiter",
+      "continents": "Kontinente",
+      "subscribers": "Skalierte Abonnenten"
+    },
+    "bullets": [
+      "20+ Jahre bei der Bereitstellung kundenorientierter digitaler Erlebnisse, Integration, Sicherheit und unternehmensweiter Modernisierung.",
+      "15+ Jahre Führung globaler Engineering-Teams mit End-to-End-Verantwortung.",
+      "Praktische Erfahrung in Gen AI, agentischen Mustern, ereignisgesteuerten Architekturen und Cloud-native Engineering (AWS, GCP, Azure)."
+    ],
+    "scrollHint": "Profil erkunden"
+  },
+  "skills": {
+    "label": "Expertise",
+    "title": "Fachliche Kompetenzen",
+    "subtitle": "Zwei Jahrzehnte praktische Erfahrung in Architektur, Cloud, KI, Sicherheit und globalem Engineering-Leadership.",
+    "categories": {
+      "ai": {
+        "title": "KI & Emerging Technologies",
+        "items": [
+          "Generative KI & Agentische Muster",
+          "RAG-Engines (LangChain, Azure OpenAI, Bedrock)",
+          "LLM-Integration & Prompt Engineering",
+          "Ereignisgesteuerte Architekturen",
+          "Claude Code & Skills: Sonnet, Qwen, Opus",
+          "Co-Pilot, Junie",
+          "Huggingface, Unsloth Studio"
+        ]
+      },
+      "cloud": {
+        "title": "Cloud & Infrastruktur",
+        "items": [
+          "AWS (Lambda, Bedrock, OpenSearch, S3, ECS)",
+          "GCP & Azure (OpenAI, Zilliz)",
+          "Kubernetes, Istio, Apigee",
+          "Serverless & Microservices"
+        ]
+      },
+      "engineering": {
+        "title": "Engineering & Architektur",
+        "items": [
+          "Lösungs- & Unternehmensarchitektur",
+          "Engineering-Management: DevSecOps, DORA, XP, SCRUM, SAFe",
+          "API-Management & Design",
+          "Modernisierung von Legacy-Plattformen",
+          "Spring Boot, Kafka, React, Python",
+          "Java, NodeJS, Kotlin, Scala",
+          "Oracle, DynamoDB, MongoDB, PostgreSQL, Redis",
+          "Databricks, Kafka, Cassandra, Apache Camel, Apache NiFi"
+        ]
+      },
+      "security": {
+        "title": "Sicherheit & Compliance",
+        "items": [
+          "GDPR", "HIPAA", "SOX", "SOC", "Sicherheits-Guardrails", "InfoSec-Governance"
+        ]
+      },
+      "leadership": {
+        "title": "Führung & Lieferung",
+        "items": [
+          "15+ Jahre globale Teamführung",
+          "Agile / SAFe PI-Planung",
+          "End-to-End-Lieferverantwortung",
+          "Stakeholder- & Roadmap-Management"
+        ]
+      },
+      "digital": {
+        "title": "Digitale Erlebnisse",
+        "items": [
+          "Kundenorientierte digitale Produkte",
+          "Mobile & Web-Plattform-Engineering",
+          "UI/UX-Standards & Implementierung",
+          "Integrationsarchitektur"
+        ]
+      }
+    }
+  },
+  "experience": {
+    "label": "Werdegang",
+    "title": "Ausgewählte Erfahrungen",
+    "subtitle": "Eine Auswahl hochwirksamer Engagements in der Unternehmenstransformation, KI und Plattform-Engineering.",
+    "entries": [
+      {
+        "company": "Equifax (EFX)",
+        "highlight": "Engineering-Skalierung & Governance",
+        "description": "Engineering-Teams von 8 auf 20 Personen in 3 Ländern skaliert; 34 Sprints und 3 PI-Planungen geleitet. Produkt-Roadmap und Governance in Zusammenarbeit mit Architektur-, InfoSec- und Engineering-Stakeholdern geführt."
+      },
+      {
+        "company": "Medizintechnikunternehmen",
+        "highlight": "API-Sicherheit für chirurgische Geräte",
+        "description": "API-Management implementiert und Sicherheits-Guardrails für Microservices zur Steuerung chirurgischer Geräte entwickelt."
+      },
+      {
+        "company": "RAG & Agentisch",
+        "highlight": "RAG-Engine für Vertragsmanagement",
+        "description": "Eine RAG-Engine für die Produktivität im Leasing-Vertragsmanagement entwickelt. Eine serverlose Version für AWS erstellt. Claude Skills für TDD-Workflow und einen EventStorming-Facilitator-Agenten implementiert."
+      },
+      {
+        "company": "TracFone / Largest MVNO in USA",
+        "highlight": "Modernisierung der mobilen Wireless-Plattform",
+        "description": "Middleware und Portal für die mobile Wireless-Dienstbereitstellung modernisiert, neu aufgebaut und standardisiert – Skalierung von 6M auf 19M Abonnenten über 8 Marken."
+      },
+      {
+        "company": "FISERV",
+        "highlight": "Echtzeit-Zahlungsnetzwerk",
+        "description": "Lösungsarchitektur und Design für Echtzeit-Zahlungsnetzwerk-Anforderungen bereitgestellt und mit OpenBanking-Kunden-APIs integriert."
+      },
+      {
+        "company": "Fifth Third Bank",
+        "highlight": "Mobile Banking Wallet",
+        "description": "Technischer Leiter — Integrations- und Serviceschicht für die persönliche Banking Mobile Wallet für 2,4 Millionen monatliche Mobile-Banking-Nutzer entworfen und implementiert."
+      }
+    ]
+  },
+  "clients": {
+    "label": "Portfolio",
+    "title": "Ausgewählte Kunden & Arbeitgeber",
+    "subtitle": "Eine Erfolgsgeschichte mit Branchenführern aus Finanzdienstleistungen, Gesundheitswesen, Telekommunikation und mehr.",
+    "categories": {
+      "financialServices": "Finanzdienstleistungen",
+      "banking": "Bankwesen",
+      "fintech": "Fintech",
+      "telecom": "Telekommunikation",
+      "healthtech": "HealthTech",
+      "retail": "Einzelhandel & Lieferkette"
+    }
+  },
+  "cta": {
+    "badge": "Verfügbar für Möglichkeiten",
+    "title": "Lassen Sie uns etwas Bemerkenswertes aufbauen",
+    "subtitle": "Berechtigt zur Arbeit in den Vereinigten Staaten ohne Sponsoring. Offen für Senior-Architektur-, Engineering-Leadership- und Beratungsengagements.",
+    "email": "Nachricht senden",
+    "linkedin": "LinkedIn-Profil"
+  },
+  "footer": {
+    "role": "Leitender Architekt & Engineering-Führungskraft",
+    "location": "Vereinigte Staaten — US-Bürger, Kein Sponsoring erforderlich"
+  }
+}
