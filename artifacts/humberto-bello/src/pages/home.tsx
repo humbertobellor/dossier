@@ -48,6 +48,9 @@ const skillCategories = [
       "API Management & Design",
       "Legacy Platform Modernization",
       "Spring Boot, Kafka, React, Python",
+      "Java, NodeJS, Kotlin, Scala",
+      "Oracle, DynamoDB, MongoDB, PostgreSQL, Redis",
+      "Databricks, Kafka, Cassandra, Apache Camel, Apache NiFi",
     ],
   },
   {
