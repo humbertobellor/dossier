@@ -15,7 +15,7 @@ import {
   Award,
   ArrowRight,
 } from "lucide-react";
-import headshot from "@assets/AC107831-0872-4D97-A455-49E096D38B2F_1776739603885.png";
+import headshot from "@assets/headshot-corp_1776959044728.png";
 
 const teal = "#56B5A3";
 
@@ -247,42 +247,42 @@ export default function Home() {
           style={{ background: "#2a7ecb" }}
         />
 
+        {/* LEFT — Full-bleed photo (half the slide) */}
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute inset-y-0 left-0 w-1/2 hidden md:block"
+          data-testid="hero-photo-col"
+        >
+          <img
+            src={headshot}
+            alt="Humberto Bert Bello"
+            className="w-full h-full object-cover"
+            style={{ objectPosition: "center top" }}
+            data-testid="hero-headshot"
+          />
+          {/* Gradient fade to the right so it blends into the dark bg */}
+          <div
+            className="absolute inset-y-0 right-0 w-32"
+            style={{
+              background: "linear-gradient(to right, transparent, #0d1821)",
+            }}
+          />
+          {/* Subtle teal tint overlay at bottom */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-32"
+            style={{
+              background: `linear-gradient(to top, rgba(13,24,33,0.7), transparent)`,
+            }}
+          />
+        </motion.div>
+
         <motion.div
           style={{ opacity: heroOpacity, y: heroY }}
-          className="relative z-10 w-full max-w-6xl mx-auto px-6 py-28 md:py-0 md:min-h-screen flex items-center"
+          className="relative z-10 w-full flex items-center min-h-screen"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center w-full">
-
-            {/* LEFT — Photo */}
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              className="flex justify-center md:justify-end"
-              data-testid="hero-photo-col"
-            >
-              <div className="relative">
-                {/* Teal glow ring behind photo */}
-                <div
-                  className="absolute inset-0 rounded-3xl blur-2xl scale-110 opacity-30"
-                  style={{ background: `linear-gradient(135deg, ${teal}, #2a7ecb)` }}
-                />
-                {/* Decorative border frame */}
-                <div
-                  className="absolute -inset-1 rounded-3xl"
-                  style={{
-                    background: `linear-gradient(135deg, rgba(86,181,163,0.5) 0%, rgba(42,126,203,0.3) 50%, rgba(86,181,163,0.2) 100%)`,
-                  }}
-                />
-                <img
-                  src={headshot}
-                  alt="Humberto Bert Bello"
-                  className="relative w-72 h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 object-cover rounded-3xl"
-                  style={{ objectPosition: "center top" }}
-                  data-testid="hero-headshot"
-                />
-              </div>
-            </motion.div>
+          <div className="w-full md:w-1/2 md:ml-auto px-8 md:px-12 py-28 md:py-0">
 
             {/* RIGHT — Content */}
             <motion.div
@@ -367,7 +367,7 @@ export default function Home() {
 
               {/* Compliance Tags */}
               <div className="flex flex-wrap gap-1.5 mb-9">
-                {["GDPR", "HIPAA", "SOX", "SOC", "AWS", "GCP", "Azure", "Gen AI"].map((tag) => (
+                {["GDPR", "HIPAA", "SOX", "SOC", "FHIR", "AWS", "GCP", "Azure", "Gen AI"].map((tag) => (
                   <span
                     key={tag}
                     className="px-2.5 py-1 rounded-full text-xs font-semibold border"
