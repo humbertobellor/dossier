@@ -45,6 +45,7 @@ const skillCategories = [
     title: "Engineering & Architecture",
     items: [
       "Solution & Enterprise Architecture",
+      "Engineering Management: DevSecOps, DORA, XP, SCRUM, SAFe",
       "API Management & Design",
       "Legacy Platform Modernization",
       "Spring Boot, Kafka, React, Python",
