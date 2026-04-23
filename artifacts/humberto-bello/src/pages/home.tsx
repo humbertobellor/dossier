@@ -128,7 +128,7 @@ const clients = [
   { name: "FISERV", category: "Fintech" },
   { name: "TracFone / MVNO", category: "Telecom" },
   { name: "J&J - Medical Devices", category: "HealthTech" },
-  { name: "Major Leasing Platform", category: "Real Estate" },
+  { name: "Dollar General", category: "Retail & Supply Chain" },
 ];
 
 function FadeInSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
