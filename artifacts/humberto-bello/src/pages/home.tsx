@@ -127,7 +127,7 @@ const clients = [
   { name: "Fifth Third Bank", category: "Banking" },
   { name: "FISERV", category: "Fintech" },
   { name: "TracFone / MVNO", category: "Telecom" },
-  { name: "Medical Device Leader", category: "HealthTech" },
+  { name: "J&J - Medical Devices", category: "HealthTech" },
   { name: "Major Leasing Platform", category: "Real Estate" },
 ];
 
