@@ -47,3 +47,7 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Static build output copied to workspace root for deployment
+/index.html
+/assets/
