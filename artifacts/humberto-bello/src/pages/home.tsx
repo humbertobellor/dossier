@@ -197,11 +197,13 @@ export default function Home() {
 
             <a
               href="mailto:humberto.bello@protonmail.com"
-              className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:opacity-90"
+              className="inline-flex items-center gap-2 px-3 md:px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:opacity-90"
               style={{ background: teal, color: "#fff" }}
               data-testid="nav-contact"
+              title={t("nav.getInTouch")}
             >
-              {t("nav.getInTouch")}
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <span className="hidden md:inline">{t("nav.getInTouch")}</span>
             </a>
           </div>
         </div>
