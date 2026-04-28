@@ -182,6 +182,19 @@ export default function Home() {
               ))}
             </div>
 
+            {/* Resume — icon-only pill on mobile, hidden on desktop (desktop uses the nav link) */}
+            <a
+              href="/Humberto_Bello_Resume.pdf"
+              download="Humberto_Bello_Resume.pdf"
+              className="md:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200"
+              style={{ borderColor: "rgba(86,181,163,0.35)", color: teal, background: "rgba(86,181,163,0.08)" }}
+              data-testid="nav-resume-mobile"
+              title={t("nav.resume")}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              {t("nav.resume")}
+            </a>
+
             <a
               href="mailto:humberto.bello@protonmail.com"
               className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:opacity-90"
