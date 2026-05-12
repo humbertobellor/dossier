@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-This repository is a pnpm monorepo with one production-facing application: a public React/Vite portfolio site in `artifacts/humberto-bello`. It also contains a small Express API in `artifacts/api-server`, shared OpenAPI/client/database libraries under `lib/`, and a `artifacts/mockup-sandbox` preview app used for development.
+This repository is a pnpm monorepo with two production-relevant surfaces: a public React/Vite portfolio site in `artifacts/humberto-bello` served at `/`, and a small Express API in `artifacts/api-server` served at `/api`. It also contains shared OpenAPI/client/database libraries under `lib/` and a `artifacts/mockup-sandbox` preview app used for development.
 
-In the current codebase, the portfolio is static and public, the API exposes only a health check, and the shared database layer is provisioned but not exercised by any production route. Per platform assumptions, production traffic is terminated over TLS by the platform and `NODE_ENV` is `production`.
+The current deployment wiring confirms that the portfolio is built as a static site, the API is a separate production service, and the mockup sandbox has development-only service wiring with no production stanza. In the checked-in code, the portfolio is static and public, the API exposes only a health check, and the shared database layer is provisioned but not exercised by any production route. Per platform assumptions, production traffic is terminated over TLS by the platform and `NODE_ENV` is `production`.
 
 ## Assets
 
@@ -19,12 +19,12 @@ In the current codebase, the portfolio is static and public, the API exposes onl
 - **Browser to portfolio frontend** — all page state and navigation inputs from the browser are untrusted, even though the current site is mostly static.
 - **Browser to API (`/api`)** — any production API route must treat requests as untrusted and enforce validation, authentication, and authorization server-side.
 - **API to PostgreSQL** — `lib/db` creates a privileged database connection from `DATABASE_URL`; injection or unsafe query construction here would directly impact data confidentiality and integrity.
-- **Production vs dev-only artifacts** — `artifacts/mockup-sandbox` is a development/preview surface and should be ignored unless it becomes reachable from the deployed production app.
+- **Production vs dev-only artifacts** — `artifacts/mockup-sandbox` is a development/preview surface with development-only service wiring and should be ignored unless it becomes reachable from the deployed production app.
 - **Build-time environment to client bundle** — Vite configuration and frontend code must not leak server-side secrets into shipped client assets.
 
 ## Scan Anchors
 
-- **Production entry points:** `artifacts/humberto-bello/src/main.tsx`, `artifacts/humberto-bello/src/App.tsx`, `artifacts/api-server/src/index.ts`, `artifacts/api-server/src/app.ts`.
+- **Production entry points:** `artifacts/humberto-bello/src/main.tsx`, `artifacts/humberto-bello/src/App.tsx`, `artifacts/api-server/src/index.ts`, `artifacts/api-server/src/app.ts`, `artifacts/api-server/src/routes/health.ts`.
 - **Highest-risk code areas:** `artifacts/api-server/src/**` for future API expansion, `lib/api-client-react/src/custom-fetch.ts` for auth/header handling, `lib/db/src/index.ts` for database access.
 - **Public vs authenticated vs admin surfaces:** current production surface is entirely public; there are no authenticated or admin routes in the checked-in code.
 - **Dev-only areas usually out of scope:** `artifacts/mockup-sandbox/**`, generated UI primitives not imported by production routes, and local preview/build helpers unless production reachability is demonstrated.
