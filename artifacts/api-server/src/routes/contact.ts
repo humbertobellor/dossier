@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { z } from "zod";
 import { Resend } from "resend";
+import { db, contactSubmissionsTable } from "@workspace/db";
 
 const router: IRouter = Router();
 
@@ -21,10 +22,19 @@ router.post("/contact", async (req, res) => {
   const email: string   = parsed.data.email;
   const message: string = parsed.data.message;
 
+  try {
+    await db.insert(contactSubmissionsTable).values({ name, email, message });
+    req.log.info({ email }, "Contact submission saved to DB");
+  } catch (err) {
+    req.log.error({ err }, "Failed to save contact submission to DB");
+    res.status(500).json({ error: "Failed to save submission" });
+    return;
+  }
+
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    req.log.error("RESEND_API_KEY is not set");
-    res.status(503).json({ error: "Email service is not configured" });
+    req.log.warn("RESEND_API_KEY is not set — submission saved but email not sent");
+    res.status(200).json({ ok: true });
     return;
   }
 
@@ -39,9 +49,7 @@ router.post("/contact", async (req, res) => {
   });
 
   if (error) {
-    req.log.error({ err: error }, "Resend error");
-    res.status(502).json({ error: "Failed to send email" });
-    return;
+    req.log.error({ err: error }, "Resend error — submission already saved to DB");
   }
 
   res.status(200).json({ ok: true });
