@@ -37,12 +37,13 @@
 @font-face { font-family: 'Bogart'; font-weight: 600; font-style: normal;
   src: url('../fonts/Bogart-Semibold-trial.woff2') format('woff2'), url('../fonts/Bogart-Semibold-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
 
-/* Trial-font workaround: digits 0-9 replaced with Newsreader CDN fallback */
-@font-face { font-family: 'Bogart'; font-style: normal; font-weight: 100 900;
+/* Trial-font workaround: digits 0-9 replaced with Newsreader CDN fallback.
+   Ranges match Bogart weights in use: 400–600 normal, 400–500 italic. */
+@font-face { font-family: 'Bogart'; font-style: normal; font-weight: 400 600;
   src: url('https://cdn.jsdelivr.net/npm/@fontsource/newsreader/files/newsreader-latin-400-normal.woff2') format('woff2'),
        local('Georgia'), local('Times New Roman');
   unicode-range: U+0030-0039; }
-@font-face { font-family: 'Bogart'; font-style: italic; font-weight: 100 900;
+@font-face { font-family: 'Bogart'; font-style: italic; font-weight: 400 500;
   src: url('https://cdn.jsdelivr.net/npm/@fontsource/newsreader/files/newsreader-latin-400-italic.woff2') format('woff2'),
        local('Georgia Italic'), local('Georgia');
   unicode-range: U+0030-0039; }
