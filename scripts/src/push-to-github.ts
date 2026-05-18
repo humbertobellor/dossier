@@ -36,6 +36,117 @@ async function getRemoteHead(token: string): Promise<string | null> {
   return data.object?.sha ?? null;
 }
 
+function buildTagName(sha: string, commitDate: string): string {
+  const shortSha = sha.slice(0, 7);
+  return `v${commitDate}-${shortSha}`;
+}
+
+async function tagRefExists(token: string, tag: string): Promise<boolean> {
+  const res = await fetch(
+    `${API_BASE}/repos/${OWNER}/${REPO}/git/ref/tags/${encodeURIComponent(tag)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    },
+  );
+  if (res.ok) return true;
+  if (res.status === 404) return false;
+  throw new Error(`GitHub API error checking tag ref ${res.status}: ${await res.text()}`);
+}
+
+async function createTagAndRelease(
+  token: string,
+  tag: string,
+  sha: string,
+  commitDate: string,
+): Promise<{ url: string; created: boolean }> {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+    "Content-Type": "application/json",
+  };
+
+  const tagExists = await tagRefExists(token, tag);
+
+  if (!tagExists) {
+    const tagObjRes = await fetch(`${API_BASE}/repos/${OWNER}/${REPO}/git/tags`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        tag,
+        message: `Release ${tag} — automated Replit push on ${commitDate}`,
+        object: sha,
+        type: "commit",
+      }),
+    });
+
+    if (!tagObjRes.ok) {
+      throw new Error(
+        `GitHub API error creating tag object ${tagObjRes.status}: ${await tagObjRes.text()}`,
+      );
+    }
+
+    const tagObj = (await tagObjRes.json()) as { sha?: string };
+    const tagSha = tagObj.sha;
+    if (!tagSha) throw new Error("GitHub API returned no SHA for tag object");
+
+    const refRes = await fetch(`${API_BASE}/repos/${OWNER}/${REPO}/git/refs`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ ref: `refs/tags/${tag}`, sha: tagSha }),
+    });
+
+    if (!refRes.ok) {
+      throw new Error(
+        `GitHub API error creating tag ref ${refRes.status}: ${await refRes.text()}`,
+      );
+    }
+  }
+
+  const releaseRes = await fetch(`${API_BASE}/repos/${OWNER}/${REPO}/releases`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      tag_name: tag,
+      target_commitish: sha,
+      name: tag,
+      body: `Automated release from Replit push on ${commitDate}.\n\nCommit: \`${sha}\``,
+      draft: false,
+      prerelease: false,
+    }),
+  });
+
+  if (releaseRes.status === 422) {
+    const existingRes = await fetch(
+      `${API_BASE}/repos/${OWNER}/${REPO}/releases/tags/${encodeURIComponent(tag)}`,
+      { headers },
+    );
+    if (existingRes.ok) {
+      const existing = (await existingRes.json()) as { html_url?: string };
+      return {
+        url: existing.html_url ?? `https://github.com/${OWNER}/${REPO}/releases`,
+        created: false,
+      };
+    }
+  }
+
+  if (!releaseRes.ok) {
+    throw new Error(
+      `GitHub API error creating release ${releaseRes.status}: ${await releaseRes.text()}`,
+    );
+  }
+
+  const releaseData = (await releaseRes.json()) as { html_url?: string };
+  return {
+    url: releaseData.html_url ?? `https://github.com/${OWNER}/${REPO}/releases`,
+    created: true,
+  };
+}
+
 const token = process.env.GITHUB_TOKEN;
 if (!token) {
   console.error("ERROR: GITHUB_TOKEN environment variable is not set.");
@@ -54,6 +165,14 @@ try {
   process.exit(1);
 }
 
+let commitDate: string;
+try {
+  commitDate = run("git log -1 --format=%cd --date=format:%Y.%m.%d HEAD");
+} catch {
+  const now = new Date();
+  commitDate = `${now.getUTCFullYear()}.${String(now.getUTCMonth() + 1).padStart(2, "0")}.${String(now.getUTCDate()).padStart(2, "0")}`;
+}
+
 console.log(`Checking ${REPO_URL} ...`);
 
 let remoteSha: string | null;
@@ -68,29 +187,48 @@ try {
 }
 
 if (remoteSha === headSha) {
-  console.log(`✓ Already up-to-date. GitHub is at ${headSha}`);
-  process.exit(0);
+  console.log(`  Already up-to-date. GitHub is at ${headSha}`);
+} else {
+  console.log(`  local : ${headSha}`);
+  console.log(`  remote: ${remoteSha ?? "(branch not found)"}`);
+  console.log(`Pushing ${BRANCH} → ${REPO_URL}`);
+
+  const authenticatedUrl = `https://x-access-token:${token}@github.com/${OWNER}/${REPO}.git`;
+
+  try {
+    run(`git push ${authenticatedUrl} ${BRANCH}:${BRANCH}`, { redact: token });
+  } catch (err) {
+    const msg = (err instanceof Error ? err.message : String(err)).replaceAll(token, "***");
+    console.error("ERROR: Push failed.");
+    console.error(msg);
+    console.error("\nCommon causes:");
+    console.error("  • GITHUB_TOKEN lacks the 'repo' scope");
+    console.error(
+      "  • The remote branch has commits not present locally (need to pull first)",
+    );
+    console.error("  • Network error — retry in a moment");
+    process.exit(1);
+  }
+
+  console.log(`\n✓ Pushed commit ${headSha} to ${REPO_URL}`);
 }
 
-console.log(`  local : ${headSha}`);
-console.log(`  remote: ${remoteSha ?? "(branch not found)"}`);
-console.log(`Pushing ${BRANCH} → ${REPO_URL}`);
+const tag = buildTagName(headSha, commitDate);
+console.log(`\nCreating release ${tag} ...`);
 
-const authenticatedUrl = `https://x-access-token:${token}@github.com/${OWNER}/${REPO}.git`;
-
+let release: { url: string; created: boolean };
 try {
-  run(`git push ${authenticatedUrl} ${BRANCH}:${BRANCH}`, { redact: token });
+  release = await createTagAndRelease(token, tag, headSha, commitDate);
 } catch (err) {
-  const msg = (err instanceof Error ? err.message : String(err)).replaceAll(token, "***");
-  console.error("ERROR: Push failed.");
-  console.error(msg);
-  console.error("\nCommon causes:");
-  console.error("  • GITHUB_TOKEN lacks the 'repo' scope");
   console.error(
-    "  • The remote branch has commits not present locally (need to pull first)",
+    "ERROR: Could not create release:",
+    err instanceof Error ? err.message : err,
   );
-  console.error("  • Network error — retry in a moment");
   process.exit(1);
 }
 
-console.log(`\n✓ Pushed commit ${headSha} to ${REPO_URL}`);
+if (release.created) {
+  console.log(`✓ Release created: ${release.url}`);
+} else {
+  console.log(`✓ Release already exists: ${release.url}`);
+}
