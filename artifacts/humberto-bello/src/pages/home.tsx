@@ -23,6 +23,7 @@ import {
   Zap,
 } from "lucide-react";
 import headshot from "@assets/headshot-corp_1776959044728.png";
+import { ContactForm } from "../components/ContactForm";
 
 /* ---- Wolknitive palette constants ---- */
 const INK      = "#14110B";
@@ -1067,14 +1068,20 @@ export default function Home() {
                     fontWeight: 600,
                     padding: "10px 22px",
                     borderRadius: "var(--radius-sm)",
-                    background: TEAL,
-                    color: V50,
+                    background: "transparent",
+                    border: `1px solid ${V300}`,
+                    color: V700,
                     textDecoration: "none",
-                    boxShadow: "var(--shadow-2)",
-                    transition: "background 0.15s",
+                    transition: "border-color 0.15s, color 0.15s",
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.background = TEAL_6)}
-                  onMouseLeave={e => (e.currentTarget.style.background = TEAL)}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = TEAL;
+                    e.currentTarget.style.color = TEAL;
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = V300;
+                    e.currentTarget.style.color = V700;
+                  }}
                   data-testid="cta-email"
                 >
                   {t("cta.email")} <ArrowRight size={15} />
@@ -1111,6 +1118,9 @@ export default function Home() {
                   {t("cta.linkedin")}
                 </a>
               </div>
+
+              {/* Inline contact form */}
+              <ContactForm />
             </div>
           </FadeInSection>
         </div>

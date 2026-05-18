@@ -143,7 +143,21 @@
     "title": "Lassen Sie uns etwas Bemerkenswertes aufbauen",
     "subtitle": "Berechtigt zur Arbeit in den Vereinigten Staaten ohne Sponsoring. Offen für Senior-Architektur-, Engineering-Leadership- und Beratungsengagements.",
     "email": "Nachricht senden",
-    "linkedin": "LinkedIn-Profil"
+    "linkedin": "LinkedIn-Profil",
+    "form": {
+      "name": "Ihr Name",
+      "email": "Ihre E-Mail",
+      "message": "Nachricht",
+      "submit": "Nachricht senden",
+      "submitting": "Senden…",
+      "successTitle": "Nachricht gesendet!",
+      "successBody": "Danke für Ihre Kontaktaufnahme. Bert wird sich bald bei Ihnen melden.",
+      "errorTitle": "Etwas ist schiefgelaufen.",
+      "errorBody": "Bitte versuchen Sie es erneut oder schreiben Sie direkt an humberto.bello@protonmail.com.",
+      "namePlaceholder": "Anna Müller",
+      "emailPlaceholder": "anna@beispiel.de",
+      "messagePlaceholder": "Erzählen Sie mir von Ihrem Projekt oder Ihrer Anfrage…"
+    }
   },
   "footer": {
     "role": "Leitender Architekt & Engineering-Führungskraft",

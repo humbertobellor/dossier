@@ -143,7 +143,21 @@
     "title": "Construyamos Algo Notable",
     "subtitle": "Autorizado para trabajar en los Estados Unidos sin patrocinio. Abierto a compromisos senior en arquitectura, liderazgo de ingeniería y consultoría.",
     "email": "Enviar un Mensaje",
-    "linkedin": "Perfil de LinkedIn"
+    "linkedin": "Perfil de LinkedIn",
+    "form": {
+      "name": "Tu Nombre",
+      "email": "Tu Correo",
+      "message": "Mensaje",
+      "submit": "Enviar Mensaje",
+      "submitting": "Enviando…",
+      "successTitle": "¡Mensaje enviado!",
+      "successBody": "Gracias por ponerte en contacto. Bert te responderá pronto.",
+      "errorTitle": "Algo salió mal.",
+      "errorBody": "Por favor intenta de nuevo o escribe directamente a humberto.bello@protonmail.com.",
+      "namePlaceholder": "Ana García",
+      "emailPlaceholder": "ana@ejemplo.com",
+      "messagePlaceholder": "Cuéntame sobre tu proyecto u oportunidad…"
+    }
   },
   "footer": {
     "role": "Arquitecto Principal & Líder de Ingeniería",
