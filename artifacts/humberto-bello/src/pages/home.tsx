@@ -536,14 +536,6 @@ export default function Home() {
               style={{ animationDelay: "0.1s" }}
               data-testid="hero-content-col"
             >
-              {/* Eyebrow */}
-              <p
-                className="wk-eyebrow"
-                style={{ marginBottom: "0.5rem" }}
-              >
-                {t("hero.title")}
-              </p>
-
               {/* Name */}
               <h1
                 style={{
