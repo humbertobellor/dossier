@@ -409,6 +409,8 @@ export default function Home() {
         </div>
       </nav>
 
+      <main id="main-content">
+
       {/* ───────────── HERO ───────────── */}
       <section
         id="hero"
@@ -632,7 +634,7 @@ export default function Home() {
                         fontFamily: "var(--font-ui)",
                         fontSize: "var(--fs-xs)",
                         fontWeight: 500,
-                        color: V400,
+                        color: V500,
                         letterSpacing: "0.03em",
                       }}
                     >
@@ -722,7 +724,7 @@ export default function Home() {
                     fontFamily: "var(--font-ui)",
                     fontSize: "var(--fs-xs)",
                     fontWeight: 500,
-                    color: V400,
+                    color: V500,
                     background: "none",
                     border: "none",
                     cursor: "pointer",
@@ -889,7 +891,7 @@ export default function Home() {
                           fontWeight: 600,
                           letterSpacing: "0.07em",
                           textTransform: "uppercase",
-                          color: V400,
+                          color: V500,
                           marginBottom: "1px",
                         }}
                       >
@@ -1008,7 +1010,7 @@ export default function Home() {
                       style={{
                         fontFamily: "var(--font-ui)",
                         fontSize: "var(--fs-xs)",
-                        color: V400,
+                        color: V500,
                         letterSpacing: "0.03em",
                       }}
                     >
@@ -1237,7 +1239,7 @@ export default function Home() {
                 fontFamily: "var(--font-ui)",
                 fontSize: "var(--fs-xs)",
                 fontWeight: 500,
-                color: V400,
+                color: V500,
                 letterSpacing: "0.03em",
               }}
             >
@@ -1252,7 +1254,7 @@ export default function Home() {
               fontFamily: "var(--font-ui)",
               fontSize: "var(--fs-xs)",
               fontWeight: 500,
-              color: V400,
+              color: V500,
               letterSpacing: "0.03em",
             }}
           >
@@ -1261,6 +1263,8 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      </main>
     </div>
   );
 }
