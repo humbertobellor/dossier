@@ -39,7 +39,7 @@ function bogartPreloadPlugin(base: string): Plugin {
         const chunk = bundle[fileName];
         if (
           chunk.type === "asset" &&
-          /Bogart-(Regular|Medium|Semibold)-trial[^/]*\.ttf$/.test(fileName) &&
+          /Bogart-(Regular|Medium|Semibold)-trial[^/]*\.woff2$/.test(fileName) &&
           !fileName.includes("Italic")
         ) {
           preloadFonts.push(fileName);
@@ -54,7 +54,7 @@ function bogartPreloadPlugin(base: string): Plugin {
         const links = preloadFonts
           .map(
             (f) =>
-              `    <link rel="preload" href="${base}${f}" as="font" type="font/ttf" crossorigin>`,
+              `    <link rel="preload" href="${base}${f}" as="font" type="font/woff2" crossorigin>`,
           )
           .join("\n");
         return html.replace("</head>", `${links}\n  </head>`);
