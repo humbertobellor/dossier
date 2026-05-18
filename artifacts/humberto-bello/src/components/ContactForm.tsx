@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Send, CheckCircle2, AlertCircle } from "lucide-react";
+import { Send, CheckCircle2, AlertCircle, Clock } from "lucide-react";
 
 const INK    = "#14110B";
 const TEAL   = "#1B4E4A";
@@ -11,7 +11,7 @@ const V200   = "#E7DCC0";
 const V300   = "#CFBE96";
 const V500   = "#6B5C3E";
 
-type Status = "idle" | "submitting" | "success" | "error";
+type Status = "idle" | "submitting" | "success" | "error" | "rateLimited";
 
 export function ContactForm() {
   const { t } = useTranslation();
@@ -19,6 +19,7 @@ export function ContactForm() {
   const [name, setName]       = useState("");
   const [email, setEmail]     = useState("");
   const [message, setMessage] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [status, setStatus]   = useState<Status>("idle");
   const [focused, setFocused] = useState<string | null>(null);
 
@@ -31,7 +32,7 @@ export function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message }),
+        body: JSON.stringify({ name, email, message, website: honeypot }),
       });
 
       if (res.ok) {
@@ -39,7 +40,10 @@ export function ContactForm() {
         setName("");
         setEmail("");
         setMessage("");
+        setHoneypot("");
         setTimeout(() => setStatus("idle"), 6000);
+      } else if (res.status === 429) {
+        setStatus("rateLimited");
       } else {
         setStatus("error");
       }
@@ -87,6 +91,22 @@ export function ContactForm() {
       }}
       data-testid="contact-form"
     >
+      <div
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}
+      >
+        <label htmlFor="website">Website</label>
+        <input
+          id="website"
+          type="text"
+          name="website"
+          value={honeypot}
+          tabIndex={-1}
+          autoComplete="off"
+          onChange={e => setHoneypot(e.target.value)}
+        />
+      </div>
+
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
         <div>
           <label style={labelStyle}>{t("cta.form.name")}</label>
@@ -191,6 +211,31 @@ export function ContactForm() {
             </p>
             <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--fs-xs)", color: V500, margin: "2px 0 0" }}>
               {t("cta.form.successBody")}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {status === "rateLimited" && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "0.5rem",
+            padding: "0.75rem 1rem",
+            background: "rgba(120,80,20,0.06)",
+            border: "1px solid rgba(120,80,20,0.2)",
+            borderRadius: "var(--radius-sm)",
+          }}
+          data-testid="contact-rate-limited"
+        >
+          <Clock size={15} style={{ color: "#7a5014", flexShrink: 0, marginTop: "1px" }} />
+          <div>
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: "var(--fs-xs)", fontWeight: 700, color: "#7a5014", margin: 0 }}>
+              {t("cta.form.rateLimitTitle")}
+            </p>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: "var(--fs-xs)", color: V500, margin: "2px 0 0" }}>
+              {t("cta.form.rateLimitBody")}
             </p>
           </div>
         </div>

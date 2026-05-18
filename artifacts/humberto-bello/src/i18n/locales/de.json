@@ -153,6 +153,8 @@
       "submitting": "Senden…",
       "successTitle": "Nachricht gesendet!",
       "successBody": "Danke für Ihre Kontaktaufnahme. Bert wird sich bald bei Ihnen melden.",
+      "rateLimitTitle": "Zu viele Nachrichten.",
+      "rateLimitBody": "Sie haben kürzlich einige Nachrichten gesendet. Bitte warten Sie eine Stunde und versuchen Sie es erneut.",
       "errorTitle": "Etwas ist schiefgelaufen.",
       "errorBody": "Bitte versuchen Sie es erneut oder schreiben Sie direkt an humberto.bello@protonmail.com.",
       "namePlaceholder": "Anna Müller",

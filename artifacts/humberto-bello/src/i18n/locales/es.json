@@ -153,6 +153,8 @@
       "submitting": "Enviando…",
       "successTitle": "¡Mensaje enviado!",
       "successBody": "Gracias por ponerte en contacto. Bert te responderá pronto.",
+      "rateLimitTitle": "Demasiados mensajes.",
+      "rateLimitBody": "Has enviado varios mensajes recientemente. Por favor espera una hora e intenta de nuevo.",
       "errorTitle": "Algo salió mal.",
       "errorBody": "Por favor intenta de nuevo o escribe directamente a humberto.bello@protonmail.com.",
       "namePlaceholder": "Ana García",

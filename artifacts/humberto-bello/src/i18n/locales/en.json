@@ -153,6 +153,8 @@
       "submitting": "Sending…",
       "successTitle": "Message sent!",
       "successBody": "Thanks for reaching out. Bert will get back to you soon.",
+      "rateLimitTitle": "Too many messages.",
+      "rateLimitBody": "You've sent a few messages recently. Please wait an hour and try again.",
       "errorTitle": "Something went wrong.",
       "errorBody": "Please try again or email directly at humberto.bello@protonmail.com.",
       "namePlaceholder": "Jane Smith",

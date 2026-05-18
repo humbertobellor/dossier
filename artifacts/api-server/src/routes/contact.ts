@@ -1,20 +1,36 @@
 import { Router, type IRouter } from "express";
 import { z } from "zod";
 import { Resend } from "resend";
+import rateLimit from "express-rate-limit";
 import { db, contactSubmissionsTable } from "@workspace/db";
 
 const router: IRouter = Router();
+
+const contactLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests. Please try again later." },
+});
 
 const ContactBody = z.object({
   name: z.string().min(1).max(200),
   email: z.string().email().max(320),
   message: z.string().min(1).max(5000),
+  website: z.string().optional(),
 });
 
-router.post("/contact", async (req, res) => {
+router.post("/contact", contactLimiter, async (req, res) => {
   const parsed = ContactBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid request body" });
+    return;
+  }
+
+  if (parsed.data.website) {
+    req.log.warn("Honeypot triggered — discarding submission");
+    res.status(200).json({ ok: true });
     return;
   }
 
