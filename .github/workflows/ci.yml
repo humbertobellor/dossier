@@ -134,4 +134,6 @@ jobs:
 
       - name: Run lint
         if: steps.changed.outputs.any_changed == 'true'
+        # `pnpm run lint` runs `eslint . --max-warnings=0` (see root package.json).
+        # Zero warnings allowed — matches the pre-commit hook strictness.
         run: pnpm run lint
