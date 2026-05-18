@@ -8,13 +8,25 @@
  */
 
 export default (stagedFiles) => {
+  const commands = [];
+
+  const prettierFiles = stagedFiles.filter(
+    (f) => f.endsWith(".ts") || f.endsWith(".tsx") || f.endsWith(".css")
+  );
+
+  if (prettierFiles.length > 0) {
+    commands.push(`prettier --write ${prettierFiles.join(" ")}`);
+  }
+
   const fontRelated = stagedFiles.filter(
     (f) => f.endsWith(".css") || f.includes("/public/fonts/")
   );
 
-  if (fontRelated.length === 0) return [];
+  if (fontRelated.length > 0) {
+    commands.push(
+      `pnpm --filter @workspace/scripts run check-fonts -- ${fontRelated.join(" ")}`
+    );
+  }
 
-  return [
-    `pnpm --filter @workspace/scripts run check-fonts -- ${fontRelated.join(" ")}`,
-  ];
+  return commands;
 };
