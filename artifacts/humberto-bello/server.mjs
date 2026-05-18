@@ -46,7 +46,7 @@ app.use(
   }),
 );
 
-app.get("*", (_req, res) => {
+app.get("/{*any}", (_req, res) => {
   res.setHeader("Cache-Control", "no-store");
   res.sendFile(path.join(dist, "index.html"));
 });
