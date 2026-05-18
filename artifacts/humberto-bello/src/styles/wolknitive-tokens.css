@@ -1,7 +1,7 @@
 /* ============================================================
    Wolknitive — Colors & Type (adapted for Humberto Bello dossier)
-   Regular/Medium/Semibold use relative paths so Vite content-hashes them;
-   all other weights use absolute /fonts/ paths (served from public/)
+   All @font-face rules use absolute /fonts/ paths (served from public/)
+   so font files are stable URLs eligible for <link rel="preload">.
    ============================================================ */
 
 /* Inter Tight — self-hosted latin subset (weights 400, 500, 600) */
@@ -27,15 +27,15 @@
    Unused weights (100–300, 600 italic, 700–900) have been removed to eliminate
    unnecessary font file downloads. */
 @font-face { font-family: 'Bogart'; font-weight: 400; font-style: normal;
-  src: url('../fonts/Bogart-Regular-trial.woff2') format('woff2'), url('../fonts/Bogart-Regular-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+  src: url('/fonts/Bogart-Regular-trial.woff2') format('woff2'), url('/fonts/Bogart-Regular-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
 @font-face { font-family: 'Bogart'; font-weight: 400; font-style: italic;
   src: url('/fonts/Bogart-Italic-trial.woff2') format('woff2'), url('/fonts/Bogart-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
 @font-face { font-family: 'Bogart'; font-weight: 500; font-style: normal;
-  src: url('../fonts/Bogart-Medium-trial.woff2') format('woff2'), url('../fonts/Bogart-Medium-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+  src: url('/fonts/Bogart-Medium-trial.woff2') format('woff2'), url('/fonts/Bogart-Medium-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
 @font-face { font-family: 'Bogart'; font-weight: 500; font-style: italic;
   src: url('/fonts/Bogart-Medium-Italic-trial.woff2') format('woff2'), url('/fonts/Bogart-Medium-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
 @font-face { font-family: 'Bogart'; font-weight: 600; font-style: normal;
-  src: url('../fonts/Bogart-Semibold-trial.woff2') format('woff2'), url('../fonts/Bogart-Semibold-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+  src: url('/fonts/Bogart-Semibold-trial.woff2') format('woff2'), url('/fonts/Bogart-Semibold-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
 
 /* Trial-font workaround: digits 0-9 replaced with Newsreader CDN fallback.
    Ranges match Bogart weights in use: 400–600 normal, 400–500 italic. */
