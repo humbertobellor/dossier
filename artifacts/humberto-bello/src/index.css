@@ -48,3 +48,41 @@
     text-rendering: optimizeLegibility;
   }
 }
+
+/* ── Hero entrance animations (replaces Framer Motion for above-the-fold) ── */
+@keyframes wkFadeSlideLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes wkFadeSlideRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes wkFadeScaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes wkFadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes wkFadeSlideLeftSm {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes wkFadeSlideUpSm {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes wkBounceY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(4px); }
+}
+
+.wk-anim-fade-left    { animation: wkFadeSlideLeft   1s    cubic-bezier(0.22, 1, 0.36, 1) both; }
+.wk-anim-fade-right   { animation: wkFadeSlideRight  0.85s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.wk-anim-fade-scale   { animation: wkFadeScaleIn     0.7s  cubic-bezier(0.22, 1, 0.36, 1) both; }
+.wk-anim-fade-up      { animation: wkFadeSlideUp     0.45s ease both; }
+.wk-anim-fade-left-sm { animation: wkFadeSlideLeftSm 0.45s ease both; }
+.wk-anim-fade-up-sm   { animation: wkFadeSlideUpSm   0.45s ease both; }
+.wk-anim-bounce-y     { animation: wkBounceY 2.4s ease-in-out infinite; }

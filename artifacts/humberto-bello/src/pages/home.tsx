@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import i18n from "../i18n/i18n";
-import { motion, useInView } from "framer-motion";
 import {
   MapPin,
   Shield,
@@ -60,22 +59,21 @@ const LANGUAGES = [
   { code: "de", label: "DE" },
 ];
 
-/* ---- Shared primitives ---- */
+/* ---- Lazy below-fold animations (Framer Motion loaded after initial render) ---- */
+
+const LazyFadeIn = lazy(() =>
+  import("../components/FadeIn").then((m) => ({ default: m.FadeInSection })),
+);
 
 function FadeInSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
-    >
-      {children}
-    </motion.div>
+    <Suspense fallback={<div>{children}</div>}>
+      <LazyFadeIn delay={delay}>{children}</LazyFadeIn>
+    </Suspense>
   );
 }
+
+/* ---- Shared primitives ---- */
 
 /** Editorial double-rule section separator */
 function WkRule() {
@@ -425,11 +423,8 @@ export default function Home() {
         data-testid="section-hero"
       >
         {/* Left — full-bleed photo, desktop only */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute inset-y-0 left-0 w-1/2 hidden md:block"
+        <div
+          className="wk-anim-fade-left absolute inset-y-0 left-0 w-1/2 hidden md:block"
           data-testid="hero-photo-col"
         >
           <picture>
@@ -477,10 +472,10 @@ export default function Home() {
               mixBlendMode: "multiply",
             }}
           />
-        </motion.div>
+        </div>
 
         {/* Right — content column */}
-        <motion.div
+        <div
           style={{ position: "relative", zIndex: 10, width: "100%", display: "flex", alignItems: "center", minHeight: "100vh" }}
         >
           <div
@@ -488,11 +483,8 @@ export default function Home() {
             className="w-full md:w-1/2 md:ml-auto md:px-12 md:py-0"
           >
             {/* Mobile headshot */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="flex justify-center mb-8 md:hidden"
+            <div
+              className="wk-anim-fade-scale flex justify-center mb-8 md:hidden"
               data-testid="hero-photo-mobile"
             >
               <div style={{ position: "relative", display: "inline-block" }}>
@@ -536,13 +528,12 @@ export default function Home() {
                   />
                 </picture>
               </div>
-            </motion.div>
+            </div>
 
             {/* Hero content */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.85, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            <div
+              className="wk-anim-fade-right"
+              style={{ animationDelay: "0.1s" }}
               data-testid="hero-content-col"
             >
               {/* Eyebrow */}
@@ -603,12 +594,11 @@ export default function Home() {
                   { value: "3",   key: "continents" },
                   { value: "19M+",key: "subscribers" },
                 ].map((stat, i) => (
-                  <motion.div
+                  <div
                     key={stat.key}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + i * 0.07, duration: 0.45 }}
+                    className="wk-anim-fade-up"
                     style={{
+                      animationDelay: `${0.3 + i * 0.07}s`,
                       background: V100,
                       border: `1px solid ${V200}`,
                       borderRadius: "var(--radius-md)",
@@ -640,19 +630,17 @@ export default function Home() {
                     >
                       {t(`hero.stats.${stat.key}`)}
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
 
               {/* Bullets */}
               <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem", marginBottom: "1.5rem" }}>
                 {heroBullets.map((point, i) => (
-                  <motion.div
+                  <div
                     key={i}
-                    initial={{ opacity: 0, x: -12 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 + i * 0.1, duration: 0.45 }}
-                    style={{ display: "flex", alignItems: "flex-start", gap: "0.625rem" }}
+                    className="wk-anim-fade-left-sm"
+                    style={{ animationDelay: `${0.5 + i * 0.1}s`, display: "flex", alignItems: "flex-start", gap: "0.625rem" }}
                     data-testid={`hero-bullet-${i}`}
                   >
                     <div
@@ -676,7 +664,7 @@ export default function Home() {
                     >
                       {point}
                     </p>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
 
@@ -688,11 +676,10 @@ export default function Home() {
               </div>
 
               {/* Credential badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.85, duration: 0.45 }}
+              <div
+                className="wk-anim-fade-up-sm"
                 style={{
+                  animationDelay: "0.85s",
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "6px",
@@ -709,14 +696,13 @@ export default function Home() {
               >
                 <Shield size={11} style={{ color: TEAL }} />
                 {t("hero.badge")}
-              </motion.div>
+              </div>
 
               {/* Scroll hint */}
               <div style={{ display: "block" }}>
-                <motion.button
+                <button
                   onClick={() => scrollTo("skills")}
-                  animate={{ y: [0, 4, 0] }}
-                  transition={{ repeat: Infinity, duration: 2.4, ease: "easeInOut" }}
+                  className="wk-anim-bounce-y"
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -733,11 +719,11 @@ export default function Home() {
                   data-testid="hero-scroll-hint"
                 >
                   {t("hero.scrollHint")} <ChevronDown size={14} />
-                </motion.button>
+                </button>
               </div>
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* ───────────── SKILLS ───────────── */}
