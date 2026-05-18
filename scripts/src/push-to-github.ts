@@ -57,6 +57,43 @@ async function tagRefExists(token: string, tag: string): Promise<boolean> {
   throw new Error(`GitHub API error checking tag ref ${res.status}: ${await res.text()}`);
 }
 
+async function findExistingReleaseForCommit(
+  token: string,
+  sha: string,
+): Promise<{ url: string; name: string } | null> {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+  for (let page = 1; ; page++) {
+    const res = await fetch(
+      `${API_BASE}/repos/${OWNER}/${REPO}/releases?per_page=100&page=${page}`,
+      { headers },
+    );
+    if (!res.ok) {
+      if (res.status === 404) return null;
+      throw new Error(`GitHub API error listing releases ${res.status}: ${await res.text()}`);
+    }
+    const releases = (await res.json()) as Array<{
+      target_commitish?: string;
+      html_url?: string;
+      name?: string;
+      tag_name?: string;
+    }>;
+    if (releases.length === 0) break;
+    const match = releases.find((r) => r.target_commitish === sha);
+    if (match) {
+      return {
+        url: match.html_url ?? `https://github.com/${OWNER}/${REPO}/releases`,
+        name: match.name ?? match.tag_name ?? sha.slice(0, 7),
+      };
+    }
+    if (releases.length < 100) break;
+  }
+  return null;
+}
+
 async function createTagAndRelease(
   token: string,
   tag: string,
@@ -213,22 +250,41 @@ if (remoteSha === headSha) {
   console.log(`\n✓ Pushed commit ${headSha} to ${REPO_URL}`);
 }
 
-const tag = buildTagName(headSha, commitDate);
-console.log(`\nCreating release ${tag} ...`);
+console.log(`\nChecking for an existing release on commit ${headSha.slice(0, 7)} ...`);
 
-let release: { url: string; created: boolean };
+let existingReleaseUrl: { url: string; name: string } | null;
 try {
-  release = await createTagAndRelease(token, tag, headSha, commitDate);
+  existingReleaseUrl = await findExistingReleaseForCommit(token, headSha);
 } catch (err) {
   console.error(
-    "ERROR: Could not create release:",
+    "ERROR: Could not query existing releases:",
     err instanceof Error ? err.message : err,
   );
   process.exit(1);
 }
 
-if (release.created) {
-  console.log(`✓ Release created: ${release.url}`);
+if (existingReleaseUrl !== null) {
+  console.log(
+    `✓ Release already exists for this commit: ${existingReleaseUrl.name} — ${existingReleaseUrl.url}`,
+  );
 } else {
-  console.log(`✓ Release already exists: ${release.url}`);
+  const tag = buildTagName(headSha, commitDate);
+  console.log(`  No existing release found. Creating release ${tag} ...`);
+
+  let release: { url: string; created: boolean };
+  try {
+    release = await createTagAndRelease(token, tag, headSha, commitDate);
+  } catch (err) {
+    console.error(
+      "ERROR: Could not create release:",
+      err instanceof Error ? err.message : err,
+    );
+    process.exit(1);
+  }
+
+  if (release.created) {
+    console.log(`✓ Release created: ${release.url}`);
+  } else {
+    console.log(`✓ Release already exists: ${release.url}`);
+  }
 }
