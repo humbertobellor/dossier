@@ -18,15 +18,15 @@
     },
     "bullets": [
       "20+ Jahre bei der Bereitstellung kundenorientierter digitaler Erlebnisse, Integration, Sicherheit und unternehmensweiter Modernisierung.",
-      "15+ Jahre Führung globaler Engineering-Teams mit End-to-End-Verantwortung.",
-      "Praktische Erfahrung in Gen AI, agentischen Mustern, ereignisgesteuerten Architekturen und Cloud-native Engineering (AWS, GCP, Azure)."
+      "15+ Jahre Führung globaler Engineering-Teams als Engineering Manager und Engineering Director mit End-to-End-Verantwortung.",
+      "Hands-on KI-Architekt und Engineer — agentische KI-Systeme, RAG-Pipelines, LLM-Integration und Cloud-native Engineering (AWS, GCP, Azure)."
     ],
     "scrollHint": "Profil erkunden"
   },
   "skills": {
     "label": "Expertise",
     "title": "Fachliche Kompetenzen",
-    "subtitle": "Zwei Jahrzehnte praktische Erfahrung in Architektur, Cloud, KI, Sicherheit und globalem Engineering-Leadership.",
+    "subtitle": "Zwei Jahrzehnte praktische Erfahrung als KI-Architekt, Engineering Director und Solopreneur — von agentischen KI-Systemen und RAG-Engineering bis hin zu Cloud, Sicherheit und globaler Teamführung.",
     "categories": {
       "ai": {
         "title": "KI & Emerging Technologies",
@@ -141,7 +141,7 @@
   "cta": {
     "badge": "Verfügbar für Möglichkeiten",
     "title": "Lassen Sie uns etwas Bemerkenswertes aufbauen",
-    "subtitle": "Berechtigt zur Arbeit in den Vereinigten Staaten ohne Sponsoring. Offen für Senior-Architektur-, Engineering-Leadership- und Beratungsengagements.",
+    "subtitle": "Berechtigt zur Arbeit in den Vereinigten Staaten ohne Sponsoring. Offen für KI-Architekt-, Engineering-Director- und Beratungsengagements — einschließlich fraktionaler und Solopreneur-Rollen.",
     "email": "Nachricht senden",
     "linkedin": "LinkedIn-Profil",
     "github": "GitHub",

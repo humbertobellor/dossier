@@ -18,15 +18,15 @@
     },
     "bullets": [
       "Más de 20 años entregando experiencias digitales centradas en el cliente, integración, seguridad y modernización a escala empresarial.",
-      "Más de 15 años liderando equipos de ingeniería globales con responsabilidad de entrega de extremo a extremo.",
-      "Experiencia práctica en Gen AI, patrones agénticos, arquitecturas orientadas a eventos e ingeniería cloud-native (AWS, GCP, Azure)."
+      "Más de 15 años liderando equipos globales como Gerente de Ingeniería y Director de Ingeniería con responsabilidad de entrega de extremo a extremo.",
+      "Arquitecto e ingeniero de IA en activo — sistemas de IA agéntica, pipelines RAG, integración LLM e ingeniería cloud-native (AWS, GCP, Azure)."
     ],
     "scrollHint": "Explorar Perfil"
   },
   "skills": {
     "label": "Especialización",
     "title": "Habilidades Profesionales",
-    "subtitle": "Dos décadas de experiencia práctica en arquitectura, nube, IA, seguridad y liderazgo de ingeniería global.",
+    "subtitle": "Dos décadas de experiencia práctica como arquitecto de IA, director de ingeniería y solopreneur — abarcando IA agéntica, ingeniería RAG, nube, seguridad y liderazgo de equipos globales.",
     "categories": {
       "ai": {
         "title": "IA & Tecnologías Emergentes",
@@ -141,7 +141,7 @@
   "cta": {
     "badge": "Disponible para Oportunidades",
     "title": "Construyamos Algo Notable",
-    "subtitle": "Autorizado para trabajar en los Estados Unidos sin patrocinio. Abierto a compromisos senior en arquitectura, liderazgo de ingeniería y consultoría.",
+    "subtitle": "Autorizado para trabajar en los Estados Unidos sin patrocinio. Abierto a roles de arquitecto de IA, director de ingeniería y consultoría — incluidos compromisos fraccionados y como solopreneur.",
     "email": "Enviar un Mensaje",
     "linkedin": "Perfil de LinkedIn",
     "github": "GitHub",
