@@ -60,7 +60,7 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pnpm --filter @workspace/scripts run push-now"
+args = "pnpm --filter @workspace/scripts run push-to-github"
 
 [agent]
 stack = "PNPM_WORKSPACE"
