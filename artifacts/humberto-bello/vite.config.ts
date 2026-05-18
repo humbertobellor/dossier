@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import { visualizer } from "rollup-plugin-visualizer";
+import fs from "fs/promises";
 
 const rawPort = process.env.PORT;
 
@@ -25,6 +26,35 @@ if (!basePath) {
   throw new Error(
     "BASE_PATH environment variable is required but was not provided.",
   );
+}
+
+function criticalCssPlugin(outDir: string, publicPath: string): Plugin {
+  return {
+    name: "critical-css-inline",
+    apply: "build",
+    async closeBundle() {
+      const { default: Beasties } = await import("beasties");
+      const indexPath = path.join(outDir, "index.html");
+      let html: string;
+      try {
+        html = await fs.readFile(indexPath, "utf-8");
+      } catch (err) {
+        console.error(
+          `[critical-css-inline] Could not read ${indexPath}: ${String(err)}`,
+        );
+        throw err;
+      }
+      const beasties = new Beasties({
+        path: outDir,
+        publicPath,
+        preload: "swap",
+        noscriptFallback: true,
+        pruneSource: false,
+      });
+      const result = await beasties.process(html);
+      await fs.writeFile(indexPath, result, "utf-8");
+    },
+  };
 }
 
 function heroPreloadPlugin(base: string): Plugin {
@@ -112,6 +142,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     runtimeErrorOverlay(),
+    criticalCssPlugin(path.resolve(import.meta.dirname, "dist/public"), basePath),
     heroPreloadPlugin(basePath),
     bogartPreloadPlugin(basePath),
     ...(process.env.NODE_ENV !== "production" &&
