@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
@@ -26,12 +26,50 @@ if (!basePath) {
   );
 }
 
+function bogartPreloadPlugin(base: string): Plugin {
+  let preloadFonts: string[] = [];
+
+  return {
+    name: "bogart-preload",
+    buildStart() {
+      preloadFonts = [];
+    },
+    generateBundle(_opts, bundle) {
+      for (const fileName of Object.keys(bundle)) {
+        const chunk = bundle[fileName];
+        if (
+          chunk.type === "asset" &&
+          /Bogart-(Regular|Medium|Semibold)-trial[^/]*\.ttf$/.test(fileName) &&
+          !fileName.includes("Italic")
+        ) {
+          preloadFonts.push(fileName);
+        }
+      }
+      preloadFonts.sort();
+    },
+    transformIndexHtml: {
+      order: "post",
+      handler(html) {
+        if (preloadFonts.length === 0) return html;
+        const links = preloadFonts
+          .map(
+            (f) =>
+              `    <link rel="preload" href="${base}${f}" as="font" type="font/ttf" crossorigin>`,
+          )
+          .join("\n");
+        return html.replace("</head>", `${links}\n  </head>`);
+      },
+    },
+  };
+}
+
 export default defineConfig({
   base: basePath,
   plugins: [
     react(),
     tailwindcss(),
     runtimeErrorOverlay(),
+    bogartPreloadPlugin(basePath),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
       ? [
