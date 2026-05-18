@@ -1,14 +1,15 @@
 /**
  * check-fonts.ts
  *
- * Validates that the local font files declared in wolknitive-tokens.css
- * exactly match the files present in public/fonts/.
+ * Validates that the local font files declared across all CSS files under
+ * artifacts/humberto-bello/src/styles/ exactly match the files present in
+ * public/fonts/.
  *
  * Rules:
- *   1. Every local url('/fonts/...') in the CSS must have a corresponding
+ *   1. Every local url('/fonts/...') in any CSS file must have a corresponding
  *      file in public/fonts/.
  *   2. Every file in public/fonts/ must be referenced by at least one
- *      local url('/fonts/...') in the CSS.
+ *      local url('/fonts/...') across all CSS files.
  *
  * Remote URLs (http/https) are intentionally ignored.
  */
@@ -20,39 +21,52 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "../..");
 
-const CSS_FILE = resolve(
+const STYLES_DIR = resolve(
   repoRoot,
-  "artifacts/humberto-bello/src/styles/wolknitive-tokens.css"
+  "artifacts/humberto-bello/src/styles"
 );
 const FONTS_DIR = resolve(repoRoot, "artifacts/humberto-bello/public/fonts");
 
 // ---------------------------------------------------------------------------
-// 1. Parse CSS: collect all local /fonts/... references
+// 1. Discover all CSS files under src/styles/
 // ---------------------------------------------------------------------------
-const css = readFileSync(CSS_FILE, "utf8");
+const cssFiles = readdirSync(STYLES_DIR)
+  .filter((f) => f.endsWith(".css"))
+  .map((f) => resolve(STYLES_DIR, f));
 
+if (cssFiles.length === 0) {
+  console.error(`[check-fonts] ERROR: No CSS files found in ${STYLES_DIR}`);
+  process.exit(1);
+}
+
+// ---------------------------------------------------------------------------
+// 2. Parse each CSS file and collect all local /fonts/... references
+// ---------------------------------------------------------------------------
 // Match url('...') and url("...") and url(...) — skip http/https URLs
 const URL_RE = /url\(\s*(['"]?)([^)'"]+)\1\s*\)/g;
 const referencedFiles = new Set<string>();
 
-let match: RegExpExecArray | null;
-while ((match = URL_RE.exec(css)) !== null) {
-  const href = match[2].trim();
-  if (href.startsWith("http://") || href.startsWith("https://")) continue;
-  // Expect paths like /fonts/<filename>
-  const fontMatch = href.match(/^\/fonts\/(.+)$/);
-  if (fontMatch) {
-    referencedFiles.add(fontMatch[1]);
+for (const cssFile of cssFiles) {
+  const css = readFileSync(cssFile, "utf8");
+  let match: RegExpExecArray | null;
+  URL_RE.lastIndex = 0;
+  while ((match = URL_RE.exec(css)) !== null) {
+    const href = match[2].trim();
+    if (href.startsWith("http://") || href.startsWith("https://")) continue;
+    const fontMatch = href.match(/^\/fonts\/(.+)$/);
+    if (fontMatch) {
+      referencedFiles.add(fontMatch[1]);
+    }
   }
 }
 
 // ---------------------------------------------------------------------------
-// 2. Read the actual files on disk
+// 3. Read the actual files on disk
 // ---------------------------------------------------------------------------
 const diskFiles = new Set<string>(readdirSync(FONTS_DIR));
 
 // ---------------------------------------------------------------------------
-// 3. Compare and report
+// 4. Compare and report
 // ---------------------------------------------------------------------------
 const missingFromDisk: string[] = [];
 for (const ref of referencedFiles) {
@@ -98,6 +112,7 @@ if (failed) {
 }
 
 console.log(
-  `[check-fonts] OK — ${referencedFiles.size} font reference(s) all present; ` +
+  `[check-fonts] OK — ${referencedFiles.size} font reference(s) across ` +
+    `${cssFiles.length} CSS file(s) all present on disk; ` +
     `${diskFiles.size} file(s) on disk all referenced.`
 );
