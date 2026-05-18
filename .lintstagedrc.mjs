@@ -10,12 +10,20 @@
 export default (stagedFiles) => {
   const commands = [];
 
+  const tsFiles = stagedFiles.filter(
+    (f) => f.endsWith(".ts") || f.endsWith(".tsx")
+  );
+
   const prettierFiles = stagedFiles.filter(
     (f) => f.endsWith(".ts") || f.endsWith(".tsx") || f.endsWith(".css")
   );
 
   if (prettierFiles.length > 0) {
     commands.push(`prettier --write ${prettierFiles.join(" ")}`);
+  }
+
+  if (tsFiles.length > 0) {
+    commands.push(`eslint --max-warnings=0 ${tsFiles.join(" ")}`);
   }
 
   const fontRelated = stagedFiles.filter(

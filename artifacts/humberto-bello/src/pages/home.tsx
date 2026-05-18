@@ -29,7 +29,6 @@ import { ContactForm } from "../components/ContactForm";
 const INK      = "#14110B";
 const TEAL     = "#1B4E4A";
 const TEAL_6   = "#103A37";
-const PLUM     = "#4E3457";
 const V50      = "#FAF6EC";
 const V100     = "#F3ECD9";
 const V200     = "#E7DCC0";
@@ -164,7 +163,7 @@ export default function Home() {
   const [currentLang, setCurrentLang] = useState(i18n.language.split("-")[0] || "en");
 
   const changeLanguage = (code: string) => {
-    i18n.changeLanguage(code);
+    void i18n.changeLanguage(code);
     setCurrentLang(code);
   };
 

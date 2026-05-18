@@ -6,7 +6,7 @@ import en from "./locales/en.json";
 import es from "./locales/es.json";
 import de from "./locales/de.json";
 
-i18n
+void i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
