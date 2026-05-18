@@ -44,7 +44,7 @@ const clientNames = ["Equifax", "Fifth Third Bank", "FISERV", "Verizon / MVNO", 
 const expTags = [
   ["Team Scaling", "SAFe / PI Planning", "Governance", "Global Teams"],
   ["K8s", "Istio", "Apigee", "Spring Boot", "Kafka"],
-  ["LangChain", "Python", "React", "Azure OpenAI", "Zilliz", "AWS Bedrock", "Claude Code"],
+  ["LangChain", "Python", "React", "Azure OpenAI", "Zilliz", "AWS Bedrock", "Claude Code", "QWEN", "Opus", "Sonnet"],
   ["Middleware", "Portal", "Modernization", "8 Brands"],
   ["OpenBanking", "Event Processing", "Payments", "Solution Architecture"],
   ["AWS", "Microservices", "Event Streaming", "2.4M Users"],
@@ -506,7 +506,7 @@ export default function Home() {
                 className="wk-eyebrow"
                 style={{ marginBottom: "0.5rem" }}
               >
-                Principal Architect & Engineering Leader
+                {t("hero.title")}
               </p>
 
               {/* Name */}
