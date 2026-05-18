@@ -61,7 +61,8 @@ function heroPreloadPlugin(base: string): Plugin {
           .join(", ");
         const sizes =
           "(max-width: 767px) 336px, (max-width: 1280px) 50vw, 640px";
-        const link = `    <link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="${srcset}" imagesizes="${sizes}">`;
+        const href = avif1x ? ` href="${base}${avif1x}"` : "";
+        const link = `    <link rel="preload" as="image" type="image/avif" fetchpriority="high"${href} imagesrcset="${srcset}" imagesizes="${sizes}">`;
         return html.replace("</head>", `${link}\n  </head>`);
       },
     },
