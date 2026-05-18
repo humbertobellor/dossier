@@ -1,1 +1,1 @@
-pnpm --filter @workspace/scripts run check-fonts
+pnpm lint-staged

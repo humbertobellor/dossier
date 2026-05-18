@@ -14,6 +14,10 @@
  *
  * Remote URLs (http/https) in CSS src: are intentionally ignored.
  * The dist/ and node_modules/ directories are never scanned.
+ *
+ * When called with file path arguments (e.g. by lint-staged), only the
+ * artifacts that contain those files are checked. When called with no
+ * arguments, all artifacts with a public/fonts/ directory are checked.
  */
 
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
@@ -51,16 +55,51 @@ function rel(p: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// 1. Discover all artifacts that have a public/fonts/ directory
+// 1. Determine which artifacts to check
 // ---------------------------------------------------------------------------
-const artifactNames = readdirSync(artifactsDir).filter((name) => {
-  const fontsDir = join(artifactsDir, name, "public", "fonts");
-  return statSync(join(artifactsDir, name)).isDirectory() && existsSync(fontsDir);
-});
 
-if (artifactNames.length === 0) {
-  console.log("[check-fonts] No artifacts with public/fonts/ found — nothing to check.");
-  process.exit(0);
+// lint-staged passes staged file paths as CLI arguments.
+// When arguments are present, scope the check to only the affected artifacts.
+const stagedFiles = process.argv.slice(2);
+
+let artifactNames: string[];
+
+if (stagedFiles.length > 0) {
+  const allArtifactNames = readdirSync(artifactsDir).filter((name) =>
+    statSync(join(artifactsDir, name)).isDirectory()
+  );
+
+  const affectedArtifacts = new Set<string>();
+  for (const file of stagedFiles) {
+    const absFile = resolve(repoRoot, file);
+    for (const name of allArtifactNames) {
+      const artifactPath = join(artifactsDir, name);
+      if (absFile.startsWith(artifactPath + "/")) {
+        affectedArtifacts.add(name);
+      }
+    }
+  }
+
+  // Only validate affected artifacts that actually have a public/fonts/ dir
+  artifactNames = [...affectedArtifacts].filter((name) =>
+    existsSync(join(artifactsDir, name, "public", "fonts"))
+  );
+
+  if (artifactNames.length === 0) {
+    console.log("[check-fonts] No artifacts with public/fonts/ affected by staged files — skipping.");
+    process.exit(0);
+  }
+} else {
+  // No arguments: full scan across all artifacts (CI / manual use)
+  artifactNames = readdirSync(artifactsDir).filter((name) => {
+    const fontsDir = join(artifactsDir, name, "public", "fonts");
+    return statSync(join(artifactsDir, name)).isDirectory() && existsSync(fontsDir);
+  });
+
+  if (artifactNames.length === 0) {
+    console.log("[check-fonts] No artifacts with public/fonts/ found — nothing to check.");
+    process.exit(0);
+  }
 }
 
 // ---------------------------------------------------------------------------
