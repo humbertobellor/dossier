@@ -29,7 +29,7 @@ const teal = "#56B5A3";
 
 const clientIcons = [BarChart2, Landmark, CreditCard, Smartphone, Activity, ShoppingCart];
 const clientKeys = ["financialServices", "banking", "fintech", "telecom", "healthtech", "retail"] as const;
-const clientNames = ["Equifax", "Fifth Third Bank", "FISERV", "TracFone / MVNO", "J&J - Medical Devices", "Dollar General"];
+const clientNames = ["Equifax", "Fifth Third Bank", "FISERV", "Verizon / MVNO", "J&J - Medical Devices", "Dollar General"];
 
 const expTags = [
   ["Team Scaling", "SAFe / PI Planning", "Governance", "Global Teams"],

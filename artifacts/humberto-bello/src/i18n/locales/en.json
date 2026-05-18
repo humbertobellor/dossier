@@ -109,7 +109,7 @@
         "description": "Built a RAG engine for Leasing Contract Management productivity. Produced a serverless version for AWS. Implemented Claude Skills for TDD workflow and a EventStorming facilitator agent."
       },
       {
-        "company": "TracFone / Largest MVNO in USA",
+        "company": "Verizon / Largest MVNO in USA",
         "highlight": "Mobile Wireless Platform Modernization",
         "description": "Modernized, rebuilt, and standardized the middleware and portal for Mobile Wireless service provisioning, scaling from 6M to 19M subscribers across 8 brands."
       },

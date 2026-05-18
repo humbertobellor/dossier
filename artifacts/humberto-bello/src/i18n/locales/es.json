@@ -109,7 +109,7 @@
         "description": "Construí un motor RAG para la productividad en la Gestión de Contratos de Arrendamiento. Produje una versión serverless para AWS. Implementé Claude Skills para flujo de trabajo TDD y un agente facilitador de EventStorming."
       },
       {
-        "company": "TracFone / Largest MVNO in USA",
+        "company": "Verizon / Largest MVNO in USA",
         "highlight": "Modernización de Plataforma Inalámbrica Móvil",
         "description": "Modernizé, reconstruí y estandaricé el middleware y el portal para el aprovisionamiento de servicios inalámbricos móviles, escalando de 6M a 19M de suscriptores en 8 marcas."
       },
