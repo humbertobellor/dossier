@@ -12,6 +12,7 @@ const ASSETS_DIR = resolve(
 );
 
 const INITIAL_CHUNK_LIMIT_BYTES = 150 * 1024;
+const INITIAL_AGGREGATE_LIMIT_BYTES = 200 * 1024;
 
 async function gzippedSize(filePath: string): Promise<number> {
   const tmp = join(tmpdir(), `${randomUUID()}.gz`);
@@ -74,18 +75,30 @@ async function main() {
     );
   }
 
+  let totalInitialGzip = 0;
+  for (const file of initialChunks) {
+    totalInitialGzip += await gzippedSize(join(ASSETS_DIR, file));
+  }
+  const aggregateOver = totalInitialGzip > INITIAL_AGGREGATE_LIMIT_BYTES;
+  if (aggregateOver) failed = true;
+
   console.log(
-    `\nLimit: initial chunks must each be ≤ ${INITIAL_CHUNK_LIMIT_BYTES / 1024} kB gzip`,
+    `\nAggregate initial JS: ${(totalInitialGzip / 1024).toFixed(1)} kB gzip` +
+      ` (limit ${INITIAL_AGGREGATE_LIMIT_BYTES / 1024} kB)` +
+      (aggregateOver ? "  ✗ OVER LIMIT" : "  ✓"),
+  );
+  console.log(
+    `Per-chunk limit: each initial chunk must be ≤ ${INITIAL_CHUNK_LIMIT_BYTES / 1024} kB gzip`,
   );
 
   if (failed) {
     console.error(
-      "\nFAIL: one or more initial chunks exceed the size limit. Investigate with ANALYZE=1 pnpm build.\n",
+      "\nFAIL: bundle size limit exceeded. Investigate with ANALYZE=1 pnpm build.\n",
     );
     process.exit(1);
   }
 
-  console.log("\nPASS: all initial chunks are within limit.\n");
+  console.log("\nPASS: all size limits satisfied.\n");
 }
 
 main();
