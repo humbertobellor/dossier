@@ -22,7 +22,9 @@ import {
   ShoppingCart,
   Zap,
 } from "lucide-react";
-import headshot from "@assets/headshot-corp_1776959044728.png";
+import headshotPng from "@assets/headshot-corp_1776959044728.png";
+import headshotWebp from "@assets/headshot-corp_1776959044728.webp";
+import headshotAvif from "@assets/headshot-corp_1776959044728.avif";
 import { ContactForm } from "../components/ContactForm";
 
 /* ---- Wolknitive palette constants ---- */
@@ -426,12 +428,20 @@ export default function Home() {
           className="absolute inset-y-0 left-0 w-1/2 hidden md:block"
           data-testid="hero-photo-col"
         >
-          <img
-            src={headshot}
-            alt="Humberto Bert Bello"
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
-            data-testid="hero-headshot"
-          />
+          <picture>
+            <source srcSet={headshotAvif} type="image/avif" />
+            <source srcSet={headshotWebp} type="image/webp" />
+            <img
+              src={headshotPng}
+              alt="Humberto Bert Bello"
+              fetchPriority="high"
+              loading="eager"
+              width={700}
+              height={700}
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+              data-testid="hero-headshot"
+            />
+          </picture>
           {/* Warm vellum fade on right edge */}
           <div
             style={{
@@ -479,18 +489,26 @@ export default function Home() {
                     border: `1px solid ${V300}`,
                   }}
                 />
-                <img
-                  src={headshot}
-                  alt="Humberto Bert Bello"
-                  style={{
-                    width: "10.5rem",
-                    height: "10.5rem",
-                    objectFit: "cover",
-                    objectPosition: "center top",
-                    borderRadius: "var(--radius-lg)",
-                    display: "block",
-                  }}
-                />
+                <picture>
+                  <source srcSet={headshotAvif} type="image/avif" />
+                  <source srcSet={headshotWebp} type="image/webp" />
+                  <img
+                    src={headshotPng}
+                    alt="Humberto Bert Bello"
+                    fetchPriority="high"
+                    loading="eager"
+                    width={700}
+                    height={700}
+                    style={{
+                      width: "10.5rem",
+                      height: "10.5rem",
+                      objectFit: "cover",
+                      objectPosition: "center top",
+                      borderRadius: "var(--radius-lg)",
+                      display: "block",
+                    }}
+                  />
+                </picture>
               </div>
             </motion.div>
 
