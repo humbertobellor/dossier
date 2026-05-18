@@ -7,18 +7,9 @@
 /* @import must come before @font-face */
 @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
-@font-face { font-family: 'Bogart'; font-weight: 100; font-style: normal;
-  src: url('/fonts/Bogart-Thin-trial.woff2') format('woff2'), url('/fonts/Bogart-Thin-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
-@font-face { font-family: 'Bogart'; font-weight: 100; font-style: italic;
-  src: url('/fonts/Bogart-Thin-Italic-trial.woff2') format('woff2'), url('/fonts/Bogart-Thin-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
-@font-face { font-family: 'Bogart'; font-weight: 200; font-style: normal;
-  src: url('/fonts/Bogart-Extralight-trial.woff2') format('woff2'), url('/fonts/Bogart-Extralight-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
-@font-face { font-family: 'Bogart'; font-weight: 200; font-style: italic;
-  src: url('/fonts/Bogart-Extralight-Italic-trial.woff2') format('woff2'), url('/fonts/Bogart-Extralight-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
-@font-face { font-family: 'Bogart'; font-weight: 300; font-style: normal;
-  src: url('/fonts/Bogart-Light-trial.woff2') format('woff2'), url('/fonts/Bogart-Light-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
-@font-face { font-family: 'Bogart'; font-weight: 300; font-style: italic;
-  src: url('/fonts/Bogart-Light-Italic-trial.woff2') format('woff2'), url('/fonts/Bogart-Light-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+/* Bogart weights in use: 400 normal, 400 italic, 500 normal, 500 italic, 600 normal.
+   Unused weights (100–300, 600 italic, 700–900) have been removed to eliminate
+   unnecessary font file downloads. */
 @font-face { font-family: 'Bogart'; font-weight: 400; font-style: normal;
   src: url('../fonts/Bogart-Regular-trial.woff2') format('woff2'), url('../fonts/Bogart-Regular-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
 @font-face { font-family: 'Bogart'; font-weight: 400; font-style: italic;
@@ -29,20 +20,6 @@
   src: url('/fonts/Bogart-Medium-Italic-trial.woff2') format('woff2'), url('/fonts/Bogart-Medium-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
 @font-face { font-family: 'Bogart'; font-weight: 600; font-style: normal;
   src: url('../fonts/Bogart-Semibold-trial.woff2') format('woff2'), url('../fonts/Bogart-Semibold-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
-@font-face { font-family: 'Bogart'; font-weight: 600; font-style: italic;
-  src: url('/fonts/Bogart-Semibold-Italic-trial.woff2') format('woff2'), url('/fonts/Bogart-Semibold-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
-@font-face { font-family: 'Bogart'; font-weight: 700; font-style: normal;
-  src: url('/fonts/Bogart-Bold-trial.woff2') format('woff2'), url('/fonts/Bogart-Bold-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
-@font-face { font-family: 'Bogart'; font-weight: 700; font-style: italic;
-  src: url('/fonts/Bogart-Bold-Italic-trial.woff2') format('woff2'), url('/fonts/Bogart-Bold-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
-@font-face { font-family: 'Bogart'; font-weight: 800; font-style: normal;
-  src: url('/fonts/Bogart-Extrabold-trial.woff2') format('woff2'), url('/fonts/Bogart-Extrabold-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
-@font-face { font-family: 'Bogart'; font-weight: 800; font-style: italic;
-  src: url('/fonts/Bogart-Extrabold-Italic-trial.woff2') format('woff2'), url('/fonts/Bogart-Extrabold-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
-@font-face { font-family: 'Bogart'; font-weight: 900; font-style: normal;
-  src: url('/fonts/Bogart-Black-trial.woff2') format('woff2'), url('/fonts/Bogart-Black-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
-@font-face { font-family: 'Bogart'; font-weight: 900; font-style: italic;
-  src: url('/fonts/Bogart-Black-Italic-trial.woff2') format('woff2'), url('/fonts/Bogart-Black-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
 
 /* Trial-font workaround: digits 0-9 replaced with Newsreader CDN fallback */
 @font-face { font-family: 'Bogart'; font-style: normal; font-weight: 100 900;
