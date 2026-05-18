@@ -27,6 +27,33 @@ interface CacheEntry {
   expiresAt: number;
 }
 
+const RATE_LIMIT_WARN_THRESHOLD = 100;
+
+function warnIfRateLimitLow(response: Response, logFn: typeof logger): void {
+  const remaining = response.headers.get("X-RateLimit-Remaining");
+  const reset = response.headers.get("X-RateLimit-Reset");
+
+  if (remaining === null) return;
+
+  const remainingCount = parseInt(remaining, 10);
+  if (isNaN(remainingCount)) return;
+
+  if (remainingCount < RATE_LIMIT_WARN_THRESHOLD) {
+    logFn.warn(
+      {
+        rateLimitRemaining: remainingCount,
+        rateLimitResetAt: (() => {
+          if (!reset) return undefined;
+          const resetTs = parseInt(reset, 10);
+          if (isNaN(resetTs)) return undefined;
+          return new Date(resetTs * 1000).toISOString();
+        })(),
+      },
+      "GitHub API rate limit is running low",
+    );
+  }
+}
+
 let cache: CacheEntry | null = null;
 
 async function fetchAndUpdateCache(): Promise<void> {
@@ -39,6 +66,8 @@ async function fetchAndUpdateCache(): Promise<void> {
     logger.error({ err }, "Background cache refresh: failed to reach GitHub API");
     return;
   }
+
+  warnIfRateLimitLow(upstream, logger);
 
   if (!upstream.ok) {
     if (upstream.status === 404) {
@@ -107,6 +136,8 @@ router.get("/releases", async (req, res) => {
     res.status(502).json({ error: "Failed to fetch releases" });
     return;
   }
+
+  warnIfRateLimitLow(upstream, req.log);
 
   if (!upstream.ok) {
     if (upstream.status === 404) {
