@@ -12,18 +12,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed font-related files
+        id: changed
+        uses: tj-actions/changed-files@v46
+        with:
+          files: |
+            **/*.css
+            **/public/fonts/**
+
+      - name: Skip message
+        if: steps.changed.outputs.any_changed == 'false'
+        run: echo "[check-fonts] No CSS or font files changed — skipping font reference check."
 
       - uses: pnpm/action-setup@v4
+        if: steps.changed.outputs.any_changed == 'true'
         with:
           version: "10.26.1"
 
       - uses: actions/setup-node@v4
+        if: steps.changed.outputs.any_changed == 'true'
         with:
           node-version: "24"
           cache: pnpm
 
       - name: Install dependencies
+        if: steps.changed.outputs.any_changed == 'true'
         run: pnpm install --frozen-lockfile
 
       - name: Run font reference check
+        if: steps.changed.outputs.any_changed == 'true'
         run: pnpm --filter @workspace/scripts run check-fonts
