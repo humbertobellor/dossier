@@ -64,9 +64,7 @@
       },
       "security": {
         "title": "Seguridad & Cumplimiento",
-        "items": [
-          "GDPR", "HIPAA", "SOX", "SOC", "Controles de Seguridad", "Gobernanza InfoSec"
-        ]
+        "items": ["GDPR", "HIPAA", "SOX", "SOC", "Controles de Seguridad", "Gobernanza InfoSec"]
       },
       "leadership": {
         "title": "Liderazgo & Entrega",

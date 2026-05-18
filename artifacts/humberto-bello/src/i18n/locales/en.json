@@ -64,9 +64,7 @@
       },
       "security": {
         "title": "Security & Compliance",
-        "items": [
-          "GDPR", "HIPAA", "SOX", "SOC", "Security Guardrails", "InfoSec Governance"
-        ]
+        "items": ["GDPR", "HIPAA", "SOX", "SOC", "Security Guardrails", "InfoSec Governance"]
       },
       "leadership": {
         "title": "Leadership & Delivery",
