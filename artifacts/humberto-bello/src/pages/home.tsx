@@ -25,6 +25,8 @@ import {
 import headshotPng from "@assets/headshot-corp_1776959044728.png";
 import headshotWebp from "@assets/headshot-corp_1776959044728.webp";
 import headshotAvif from "@assets/headshot-corp_1776959044728.avif";
+import headshotWebp1x from "@assets/headshot-corp_1776959044728@1x.webp";
+import headshotAvif1x from "@assets/headshot-corp_1776959044728@1x.avif";
 import { ContactForm } from "../components/ContactForm";
 
 /* ---- Wolknitive palette constants ---- */
@@ -429,8 +431,16 @@ export default function Home() {
           data-testid="hero-photo-col"
         >
           <picture>
-            <source srcSet={headshotAvif} type="image/avif" />
-            <source srcSet={headshotWebp} type="image/webp" />
+            <source
+              srcSet={`${headshotAvif1x} 350w, ${headshotAvif} 700w`}
+              type="image/avif"
+              sizes="(max-width: 767px) 0px, (max-width: 1280px) 50vw, 640px"
+            />
+            <source
+              srcSet={`${headshotWebp1x} 350w, ${headshotWebp} 700w`}
+              type="image/webp"
+              sizes="(max-width: 767px) 0px, (max-width: 1280px) 50vw, 640px"
+            />
             <img
               src={headshotPng}
               alt="Humberto Bert Bello"
@@ -438,6 +448,7 @@ export default function Home() {
               loading="eager"
               width={700}
               height={700}
+              sizes="(max-width: 767px) 0px, (max-width: 1280px) 50vw, 640px"
               style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
               data-testid="hero-headshot"
             />
@@ -490,8 +501,16 @@ export default function Home() {
                   }}
                 />
                 <picture>
-                  <source srcSet={headshotAvif} type="image/avif" />
-                  <source srcSet={headshotWebp} type="image/webp" />
+                  <source
+                    srcSet={`${headshotAvif1x} 350w, ${headshotAvif} 700w`}
+                    type="image/avif"
+                    sizes="(min-width: 768px) 0px, 336px"
+                  />
+                  <source
+                    srcSet={`${headshotWebp1x} 350w, ${headshotWebp} 700w`}
+                    type="image/webp"
+                    sizes="(min-width: 768px) 0px, 336px"
+                  />
                   <img
                     src={headshotPng}
                     alt="Humberto Bert Bello"
@@ -499,6 +518,7 @@ export default function Home() {
                     loading="eager"
                     width={700}
                     height={700}
+                    sizes="(min-width: 768px) 0px, 336px"
                     style={{
                       width: "10.5rem",
                       height: "10.5rem",
