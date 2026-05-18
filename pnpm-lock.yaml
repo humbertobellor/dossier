@@ -253,6 +253,9 @@ importers:
 
   artifacts/humberto-bello:
     dependencies:
+      '@workspace/api-client-react':
+        specifier: workspace:*
+        version: link:../../lib/api-client-react
       express:
         specifier: ^5.2.1
         version: 5.2.1

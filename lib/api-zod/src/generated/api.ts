@@ -14,3 +14,17 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * Returns the latest releases from the GitHub repository, cached for 5 minutes server-side.
+ * @summary List recent GitHub releases
+ */
+export const GetReleasesResponseItem = zod.object({
+  id: zod.number(),
+  tag_name: zod.string(),
+  name: zod.string().nullable(),
+  published_at: zod.string(),
+  body: zod.string().nullable(),
+  html_url: zod.string(),
+});
+export const GetReleasesResponse = zod.array(GetReleasesResponseItem);

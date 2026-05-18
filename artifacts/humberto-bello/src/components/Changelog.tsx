@@ -1,36 +1,9 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useGetReleases, getGetReleasesQueryKey, type Release } from "@workspace/api-client-react";
 import { ChevronDown, ChevronUp, Tag, ExternalLink } from "lucide-react";
 
 const OWNER = "humbertobellor";
 const REPO  = "dossier";
-const MAX_RELEASES = 5;
-
-interface GitHubRelease {
-  id: number;
-  tag_name: string;
-  name: string | null;
-  published_at: string;
-  body: string | null;
-  html_url: string;
-}
-
-async function fetchReleases(): Promise<GitHubRelease[]> {
-  const res = await fetch(
-    `https://api.github.com/repos/${OWNER}/${REPO}/releases?per_page=${MAX_RELEASES}`,
-    {
-      headers: {
-        Accept: "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-    },
-  );
-  if (!res.ok) {
-    if (res.status === 404) return [];
-    throw new Error(`GitHub API ${res.status}`);
-  }
-  return (await res.json()) as GitHubRelease[];
-}
 
 function formatDate(iso: string): string {
   const d = new Date(iso);
@@ -327,13 +300,14 @@ function MarkdownBody({ markdown }: { markdown: string }) {
 export function Changelog() {
   const [open, setOpen] = useState(false);
 
-  const { data: releases, status } = useQuery<GitHubRelease[]>({
-    queryKey: ["github-releases", OWNER, REPO],
-    queryFn: fetchReleases,
-    enabled:   open,
-    staleTime: 1000 * 60 * 5,
-    gcTime:    1000 * 60 * 30,
-    retry: 1,
+  const { data: releases, status } = useGetReleases({
+    query: {
+      queryKey: getGetReleasesQueryKey(),
+      enabled:   open,
+      staleTime: 1000 * 60 * 5,
+      gcTime:    1000 * 60 * 30,
+      retry: 1,
+    },
   });
 
   const latest = releases?.[0];
@@ -447,7 +421,7 @@ export function Changelog() {
   );
 }
 
-function ReleaseRow({ release }: { release: GitHubRelease }) {
+function ReleaseRow({ release }: { release: Release }) {
   const [bodyOpen, setBodyOpen] = useState(false);
 
   const body = release.body?.trim() ?? null;

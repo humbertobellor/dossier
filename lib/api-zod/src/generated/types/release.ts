@@ -5,9 +5,6 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-export interface HealthStatus {
-  status: string;
-}
 
 export interface Release {
   id: number;
@@ -16,8 +13,4 @@ export interface Release {
   published_at: string;
   body: string | null;
   html_url: string;
-}
-
-export interface ErrorResponse {
-  error: string;
 }

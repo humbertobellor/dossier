@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: releases
+    description: GitHub releases
 paths:
   /healthz:
     get:
@@ -24,6 +26,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /releases:
+    get:
+      operationId: getReleases
+      tags: [releases]
+      summary: List recent GitHub releases
+      description: Returns the latest releases from the GitHub repository, cached for 5 minutes server-side.
+      responses:
+        "200":
+          description: List of releases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Release"
+        "502":
+          description: Failed to fetch releases from GitHub
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +56,34 @@ components:
           type: string
       required:
         - status
-
+    Release:
+      type: object
+      properties:
+        id:
+          type: integer
+        tag_name:
+          type: string
+        name:
+          type: string
+          nullable: true
+        published_at:
+          type: string
+        body:
+          type: string
+          nullable: true
+        html_url:
+          type: string
+      required:
+        - id
+        - tag_name
+        - name
+        - published_at
+        - body
+        - html_url
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
