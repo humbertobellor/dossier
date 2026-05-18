@@ -1,0 +1,22 @@
+# Build output
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Generated files (orval codegen output)
+lib/*/src/generated/
+artifacts/*/src/generated/
+
+# Lockfile
+pnpm-lock.yaml
+
+# Public assets
+public/
+artifacts/*/public/
+
+# Coverage & misc
+coverage/
+*.min.js
+*.min.css
