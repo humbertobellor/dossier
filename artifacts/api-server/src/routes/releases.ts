@@ -46,7 +46,9 @@ function resolveRateLimitWarnThreshold(): number {
 
 const RATE_LIMIT_WARN_THRESHOLD = resolveRateLimitWarnThreshold();
 
-function warnIfRateLimitLow(response: Response, logFn: typeof logger): void {
+let rateLimitLow = false;
+
+function checkRateLimit(response: Response, logFn: typeof logger): void {
   const remaining = response.headers.get("X-RateLimit-Remaining");
   const reset = response.headers.get("X-RateLimit-Reset");
 
@@ -55,18 +57,33 @@ function warnIfRateLimitLow(response: Response, logFn: typeof logger): void {
   const remainingCount = parseInt(remaining, 10);
   if (isNaN(remainingCount)) return;
 
+  const resetAt = (() => {
+    if (!reset) return undefined;
+    const resetTs = parseInt(reset, 10);
+    if (isNaN(resetTs)) return undefined;
+    return new Date(resetTs * 1000).toISOString();
+  })();
+
   if (remainingCount < RATE_LIMIT_WARN_THRESHOLD) {
-    logFn.warn(
+    if (!rateLimitLow) {
+      rateLimitLow = true;
+      logFn.warn(
+        { rateLimitRemaining: remainingCount, rateLimitResetAt: resetAt },
+        "GitHub API rate limit is running low",
+      );
+    }
+  } else if (rateLimitLow) {
+    // Recovery fires when remaining >= threshold (i.e. no longer in low state).
+    // Using >= rather than strict > so that hitting exactly the threshold counts
+    // as recovered, consistent with the entry condition (< threshold = low).
+    rateLimitLow = false;
+    logFn.info(
       {
         rateLimitRemaining: remainingCount,
-        rateLimitResetAt: (() => {
-          if (!reset) return undefined;
-          const resetTs = parseInt(reset, 10);
-          if (isNaN(resetTs)) return undefined;
-          return new Date(resetTs * 1000).toISOString();
-        })(),
+        rateLimitResetAt: resetAt,
+        rateLimitWarnThreshold: RATE_LIMIT_WARN_THRESHOLD,
       },
-      "GitHub API rate limit is running low",
+      "GitHub API rate limit has recovered",
     );
   }
 }
@@ -84,7 +101,7 @@ async function fetchAndUpdateCache(): Promise<void> {
     return;
   }
 
-  warnIfRateLimitLow(upstream, logger);
+  checkRateLimit(upstream, logger);
 
   if (!upstream.ok) {
     if (upstream.status === 404) {
@@ -159,7 +176,7 @@ router.get("/releases", async (req, res) => {
     return;
   }
 
-  warnIfRateLimitLow(upstream, req.log);
+  checkRateLimit(upstream, req.log);
 
   if (!upstream.ok) {
     if (upstream.status === 404) {
