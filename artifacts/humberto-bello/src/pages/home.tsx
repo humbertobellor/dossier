@@ -21,7 +21,6 @@ import {
   ShoppingCart,
   Zap,
 } from "lucide-react";
-import headshotPng from "@assets/headshot-corp_1776959044728.png";
 import headshotWebp from "@assets/headshot-corp_1776959044728.webp";
 import headshotAvif from "@assets/headshot-corp_1776959044728.avif";
 import headshotWebp1x from "@assets/headshot-corp_1776959044728@1x.webp";
@@ -442,7 +441,7 @@ export default function Home() {
               sizes="(max-width: 1280px) 50vw, 640px"
             />
             <img
-              src={headshotPng}
+              src={headshotWebp}
               alt="Humberto Bert Bello"
               fetchPriority="high"
               loading="eager"
@@ -511,7 +510,7 @@ export default function Home() {
                     sizes="336px"
                   />
                   <img
-                    src={headshotPng}
+                    src={headshotWebp}
                     alt="Humberto Bert Bello"
                     fetchPriority="high"
                     loading="eager"

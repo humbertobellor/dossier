@@ -27,6 +27,47 @@ if (!basePath) {
   );
 }
 
+function heroPreloadPlugin(base: string): Plugin {
+  let avif1x = "";
+  let avifFull = "";
+
+  return {
+    name: "hero-preload",
+    buildStart() {
+      avif1x = "";
+      avifFull = "";
+    },
+    generateBundle(_opts, bundle) {
+      for (const fileName of Object.keys(bundle)) {
+        const chunk = bundle[fileName];
+        if (chunk.type !== "asset") continue;
+        if (!/headshot-corp[^/]*\.avif$/.test(fileName)) continue;
+        if (/@1x[^/]*\.avif$/.test(fileName)) {
+          avif1x = fileName;
+        } else {
+          avifFull = fileName;
+        }
+      }
+    },
+    transformIndexHtml: {
+      order: "post",
+      handler(html) {
+        if (!avif1x && !avifFull) return html;
+        const srcset = [
+          avif1x ? `${base}${avif1x} 350w` : "",
+          avifFull ? `${base}${avifFull} 700w` : "",
+        ]
+          .filter(Boolean)
+          .join(", ");
+        const sizes =
+          "(max-width: 767px) 336px, (max-width: 1280px) 50vw, 640px";
+        const link = `    <link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="${srcset}" imagesizes="${sizes}">`;
+        return html.replace("</head>", `${link}\n  </head>`);
+      },
+    },
+  };
+}
+
 function bogartPreloadPlugin(base: string): Plugin {
   let preloadFonts: string[] = [];
 
@@ -70,6 +111,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
     runtimeErrorOverlay(),
+    heroPreloadPlugin(basePath),
     bogartPreloadPlugin(basePath),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
