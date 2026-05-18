@@ -1201,6 +1201,8 @@ export default function Home() {
         </div>
       </section>
 
+      </main>
+
       {/* ───────────── FOOTER ───────────── */}
       <footer
         style={{
@@ -1263,8 +1265,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-
-      </main>
     </div>
   );
 }
