@@ -27,6 +27,7 @@ import headshotAvif from "@assets/headshot-corp_1776959044728.avif";
 import headshotWebp1x from "@assets/headshot-corp_1776959044728@1x.webp";
 import headshotAvif1x from "@assets/headshot-corp_1776959044728@1x.avif";
 import { ContactForm } from "../components/ContactForm";
+import { Changelog } from "../components/Changelog";
 
 /* ---- Wolknitive palette constants ---- */
 const INK      = "#14110B";
@@ -1242,6 +1243,7 @@ export default function Home() {
             {t("footer.location")}
           </div>
         </div>
+        <Changelog />
       </footer>
     </div>
   );
