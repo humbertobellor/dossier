@@ -36,3 +36,16 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - `pnpm --filter @workspace/api-server run dev` — run API server locally
 
 See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+
+## CI / GitHub Actions
+
+Every `uses:` line in `.github/workflows/ci.yml` is pinned to a full 40-character commit SHA rather than a mutable tag. A comment on each line shows the human-readable tag it corresponds to (e.g. `# v4`). This prevents unexpected breakage or supply-chain compromise from upstream tag mutations.
+
+**To update an action to a newer version:**
+1. Find the new tag's SHA via the GitHub API:
+   ```
+   curl https://api.github.com/repos/<owner>/<repo>/git/ref/tags/<tag>
+   ```
+   If the returned object type is `"tag"` (annotated), follow its `object.url` one level deeper to get the commit SHA.
+2. Replace the old SHA in the workflow with the new one.
+3. Update the inline `# vX` comment to match.

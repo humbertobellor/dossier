@@ -1,3 +1,9 @@
+# CI pinning convention: every `uses:` line references a full commit SHA.
+# The inline comment after each SHA shows the human-readable tag it corresponds to.
+# To update an action, look up the new tag's SHA (e.g. via the GitHub API:
+#   curl https://api.github.com/repos/<owner>/<repo>/git/ref/tags/<tag>
+# then follow annotated-tag objects one level deeper if needed), replace the SHA,
+# and update the comment.
 name: CI
 
 on:
@@ -11,13 +17,13 @@ jobs:
     name: Check font references
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
 
       - name: Detect changed font-related files
         id: changed
-        uses: tj-actions/changed-files@v46
+        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c # v46
         with:
           files: |
             **/*.css
@@ -27,12 +33,12 @@ jobs:
         if: steps.changed.outputs.any_changed == 'false'
         run: echo "[check-fonts] No CSS or font files changed — skipping font reference check."
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         if: steps.changed.outputs.any_changed == 'true'
         with:
           version: "10.26.1"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         if: steps.changed.outputs.any_changed == 'true'
         with:
           node-version: "24"
@@ -50,13 +56,13 @@ jobs:
     name: Typecheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
 
       - name: Detect changed TypeScript files
         id: changed
-        uses: tj-actions/changed-files@v46
+        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c # v46
         with:
           files: |
             **/*.ts
@@ -69,12 +75,12 @@ jobs:
         if: steps.changed.outputs.any_changed == 'false'
         run: echo "[typecheck] No TypeScript files changed — skipping typecheck."
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
         if: steps.changed.outputs.any_changed == 'true'
         with:
           version: "10.26.1"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         if: steps.changed.outputs.any_changed == 'true'
         with:
           node-version: "24"
