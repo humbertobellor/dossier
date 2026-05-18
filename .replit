@@ -55,12 +55,12 @@ isValidation = true
 name = "Push to GitHub"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "pnpm --filter @workspace/scripts run push-to-github"
-
 [workflows.workflow.metadata]
 outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pnpm --filter @workspace/scripts run push-now"
 
 [agent]
 stack = "PNPM_WORKSPACE"
