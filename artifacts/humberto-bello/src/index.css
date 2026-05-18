@@ -79,10 +79,10 @@
   50%      { transform: translateY(4px); }
 }
 
-.wk-anim-fade-left    { animation: wkFadeSlideLeft   1s    cubic-bezier(0.22, 1, 0.36, 1) both; }
-.wk-anim-fade-right   { animation: wkFadeSlideRight  0.85s cubic-bezier(0.22, 1, 0.36, 1) both; }
-.wk-anim-fade-scale   { animation: wkFadeScaleIn     0.7s  cubic-bezier(0.22, 1, 0.36, 1) both; }
-.wk-anim-fade-up      { animation: wkFadeSlideUp     0.45s ease both; }
-.wk-anim-fade-left-sm { animation: wkFadeSlideLeftSm 0.45s ease both; }
-.wk-anim-fade-up-sm   { animation: wkFadeSlideUpSm   0.45s ease both; }
-.wk-anim-bounce-y     { animation: wkBounceY 2.4s ease-in-out infinite; }
+.wk-anim-fade-left    { will-change: transform, opacity; animation: wkFadeSlideLeft   1s    cubic-bezier(0.22, 1, 0.36, 1) both; }
+.wk-anim-fade-right   { will-change: transform, opacity; animation: wkFadeSlideRight  0.85s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.wk-anim-fade-scale   { will-change: transform, opacity; animation: wkFadeScaleIn     0.7s  cubic-bezier(0.22, 1, 0.36, 1) both; }
+.wk-anim-fade-up      { will-change: transform, opacity; animation: wkFadeSlideUp     0.45s ease both; }
+.wk-anim-fade-left-sm { will-change: transform, opacity; animation: wkFadeSlideLeftSm 0.45s ease both; }
+.wk-anim-fade-up-sm   { will-change: transform, opacity; animation: wkFadeSlideUpSm   0.45s ease both; }
+.wk-anim-bounce-y     { will-change: transform; animation: wkBounceY 2.4s ease-in-out infinite; }

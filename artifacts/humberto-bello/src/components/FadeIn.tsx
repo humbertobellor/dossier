@@ -1,5 +1,4 @@
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 
 export function FadeInSection({
   children,
@@ -8,14 +7,13 @@ export function FadeInSection({
   children: React.ReactNode;
   delay?: number;
 }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
   return (
     <motion.div
-      ref={ref}
       initial={{ opacity: 0, y: 24 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
+      style={{ willChange: "transform, opacity" }}
     >
       {children}
     </motion.div>
