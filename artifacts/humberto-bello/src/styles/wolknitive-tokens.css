@@ -1,0 +1,190 @@
+/* ============================================================
+   Wolknitive — Colors & Type (adapted for Humberto Bello dossier)
+   Font paths use absolute /fonts/ URLs (served from public/)
+   ============================================================ */
+
+/* @import must come before @font-face */
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@font-face { font-family: 'Bogart'; font-weight: 100; font-style: normal;
+  src: url('/fonts/Bogart-Thin-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 100; font-style: italic;
+  src: url('/fonts/Bogart-Thin-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 200; font-style: normal;
+  src: url('/fonts/Bogart-Extralight-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 200; font-style: italic;
+  src: url('/fonts/Bogart-Extralight-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 300; font-style: normal;
+  src: url('/fonts/Bogart-Light-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 300; font-style: italic;
+  src: url('/fonts/Bogart-Light-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 400; font-style: normal;
+  src: url('/fonts/Bogart-Regular-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 400; font-style: italic;
+  src: url('/fonts/Bogart-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 500; font-style: normal;
+  src: url('/fonts/Bogart-Medium-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 500; font-style: italic;
+  src: url('/fonts/Bogart-Medium-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 600; font-style: normal;
+  src: url('/fonts/Bogart-Semibold-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 600; font-style: italic;
+  src: url('/fonts/Bogart-Semibold-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 700; font-style: normal;
+  src: url('/fonts/Bogart-Bold-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 700; font-style: italic;
+  src: url('/fonts/Bogart-Bold-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 800; font-style: normal;
+  src: url('/fonts/Bogart-Extrabold-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 800; font-style: italic;
+  src: url('/fonts/Bogart-Extrabold-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 900; font-style: normal;
+  src: url('/fonts/Bogart-Black-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+@font-face { font-family: 'Bogart'; font-weight: 900; font-style: italic;
+  src: url('/fonts/Bogart-Black-Italic-trial.ttf') format('truetype'); font-display: swap; unicode-range: U+0000-002F, U+003A-10FFFF; }
+
+/* Trial-font workaround: digits 0-9 replaced with Newsreader CDN fallback */
+@font-face { font-family: 'Bogart'; font-style: normal; font-weight: 100 900;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/newsreader/files/newsreader-latin-400-normal.woff2') format('woff2'),
+       local('Georgia'), local('Times New Roman');
+  unicode-range: U+0030-0039; }
+@font-face { font-family: 'Bogart'; font-style: italic; font-weight: 100 900;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/newsreader/files/newsreader-latin-400-italic.woff2') format('woff2'),
+       local('Georgia Italic'), local('Georgia');
+  unicode-range: U+0030-0039; }
+
+:root {
+  /* Neutrals: warm vellum → ink */
+  --vellum-50:  #FAF6EC;
+  --vellum-100: #F3ECD9;
+  --vellum-200: #E7DCC0;
+  --vellum-300: #CFBE96;
+  --vellum-400: #9C8A64;
+  --vellum-500: #6B5C3E;
+  --vellum-600: #4A3F2A;
+  --vellum-700: #2E261A;
+  --vellum-800: #1C1710;
+  --ink:        #14110B;
+
+  /* Teal: primary */
+  --teal-50:  #E6EDEC;
+  --teal-100: #C5D6D3;
+  --teal-200: #95B5B0;
+  --teal-300: #5F8C86;
+  --teal-400: #316662;
+  --teal-500: #1B4E4A;
+  --teal-600: #103A37;
+  --teal-700: #0A2725;
+
+  /* Plum: secondary */
+  --plum-50:  #F0E9F1;
+  --plum-100: #DCCDDF;
+  --plum-200: #BB9DC2;
+  --plum-300: #936F9C;
+  --plum-400: #6E4D77;
+  --plum-500: #4E3457;
+  --plum-600: #382540;
+  --plum-700: #25182B;
+
+  /* Amber: warm accent */
+  --amber-100: #F6E6CF;
+  --amber-300: #E5AE6E;
+  --amber-500: #C7763B;
+
+  /* Moss / Brick */
+  --moss-500: #4E6B3A;
+  --moss-100: #DDE5D0;
+  --brick-500: #A8442B;
+  --brick-100: #EFD3CB;
+
+  /* Semantic */
+  --bg:           var(--vellum-50);
+  --bg-elevated:  #FBF8EE;
+  --bg-sunken:    var(--vellum-100);
+  --bg-inverse:   var(--ink);
+
+  --fg-1: var(--ink);
+  --fg-2: var(--vellum-700);
+  --fg-3: var(--vellum-500);
+  --fg-4: var(--vellum-400);
+  --fg-on-dark: var(--vellum-50);
+
+  --accent:        var(--teal-500);
+  --accent-hover:  var(--teal-600);
+  --accent-soft:   var(--teal-50);
+  --accent-2:      var(--plum-500);
+  --accent-2-soft: var(--plum-50);
+  --highlight:     var(--amber-500);
+  --highlight-soft:var(--amber-100);
+
+  /* Borders & rules */
+  --rule-strong: var(--vellum-700);
+  --rule:        var(--vellum-300);
+  --rule-soft:   var(--vellum-200);
+
+  /* Radii */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-pill: 999px;
+
+  /* Shadows: soft, low, warm-tinted */
+  --shadow-1: 0 1px 0 rgba(20,17,11,0.04), 0 1px 2px rgba(20,17,11,0.06);
+  --shadow-2: 0 1px 0 rgba(20,17,11,0.05), 0 4px 10px -2px rgba(20,17,11,0.08);
+  --shadow-3: 0 2px 0 rgba(20,17,11,0.05), 0 12px 28px -6px rgba(20,17,11,0.12);
+  --shadow-inset: inset 0 1px 0 rgba(255,252,240,0.6), inset 0 -1px 0 rgba(20,17,11,0.06);
+
+  /* Type families */
+  --font-display: 'Bogart', 'Iowan Old Style', Georgia, serif;
+  --font-body:    'Bogart', Georgia, 'Times New Roman', serif;
+  --font-ui:      'Inter Tight', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, Menlo, monospace;
+
+  /* Type scale */
+  --fs-xs:   12px;
+  --fs-sm:   14px;
+  --fs-base: 16px;
+  --fs-md:   18px;
+  --fs-lg:   22px;
+  --fs-xl:   28px;
+  --fs-2xl:  36px;
+  --fs-3xl:  48px;
+  --fs-4xl:  64px;
+  --fs-5xl:  88px;
+
+  --lh-tight:  1.1;
+  --lh-snug:   1.25;
+  --lh-normal: 1.5;
+  --lh-loose:  1.7;
+}
+
+/* Editorial double-rule */
+.wk-rule {
+  border: 0;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 0.5px solid var(--rule);
+  height: 5px;
+  background: transparent;
+  margin: 0;
+}
+
+/* Section label eyebrow */
+.wk-label {
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+/* Bogart italic eyebrow in teal */
+.wk-eyebrow {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
