@@ -15,7 +15,12 @@ export default (stagedFiles) => {
   );
 
   const prettierFiles = stagedFiles.filter(
-    (f) => f.endsWith(".ts") || f.endsWith(".tsx") || f.endsWith(".css")
+    (f) =>
+      f.endsWith(".ts") ||
+      f.endsWith(".tsx") ||
+      f.endsWith(".css") ||
+      f.endsWith(".mjs") ||
+      f.endsWith(".json")
   );
 
   if (prettierFiles.length > 0) {
