@@ -434,12 +434,14 @@ export default function Home() {
             <source
               srcSet={`${headshotAvif1x} 350w, ${headshotAvif} 700w`}
               type="image/avif"
-              sizes="(max-width: 767px) 0px, (max-width: 1280px) 50vw, 640px"
+              media="(min-width: 768px)"
+              sizes="(max-width: 1280px) 50vw, 640px"
             />
             <source
               srcSet={`${headshotWebp1x} 350w, ${headshotWebp} 700w`}
               type="image/webp"
-              sizes="(max-width: 767px) 0px, (max-width: 1280px) 50vw, 640px"
+              media="(min-width: 768px)"
+              sizes="(max-width: 1280px) 50vw, 640px"
             />
             <img
               src={headshotPng}
@@ -448,7 +450,7 @@ export default function Home() {
               loading="eager"
               width={700}
               height={700}
-              sizes="(max-width: 767px) 0px, (max-width: 1280px) 50vw, 640px"
+              sizes="(max-width: 1280px) 50vw, 640px"
               style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
               data-testid="hero-headshot"
             />
@@ -504,12 +506,14 @@ export default function Home() {
                   <source
                     srcSet={`${headshotAvif1x} 350w, ${headshotAvif} 700w`}
                     type="image/avif"
-                    sizes="(min-width: 768px) 0px, 336px"
+                    media="(max-width: 767px)"
+                    sizes="336px"
                   />
                   <source
                     srcSet={`${headshotWebp1x} 350w, ${headshotWebp} 700w`}
                     type="image/webp"
-                    sizes="(min-width: 768px) 0px, 336px"
+                    media="(max-width: 767px)"
+                    sizes="336px"
                   />
                   <img
                     src={headshotPng}
@@ -518,7 +522,7 @@ export default function Home() {
                     loading="eager"
                     width={700}
                     height={700}
-                    sizes="(min-width: 768px) 0px, 336px"
+                    sizes="336px"
                     style={{
                       width: "10.5rem",
                       height: "10.5rem",
