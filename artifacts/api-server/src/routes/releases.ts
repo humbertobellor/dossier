@@ -27,7 +27,24 @@ interface CacheEntry {
   expiresAt: number;
 }
 
-const RATE_LIMIT_WARN_THRESHOLD = 100;
+const DEFAULT_RATE_LIMIT_WARN_THRESHOLD = 100;
+
+function resolveRateLimitWarnThreshold(): number {
+  const raw = process.env.GITHUB_RATE_LIMIT_WARN_THRESHOLD;
+  if (raw === undefined || raw === "") {
+    return DEFAULT_RATE_LIMIT_WARN_THRESHOLD;
+  }
+  if (!/^\d+$/.test(raw)) {
+    logger.warn(
+      { rawValue: raw, fallback: DEFAULT_RATE_LIMIT_WARN_THRESHOLD },
+      "GITHUB_RATE_LIMIT_WARN_THRESHOLD is not a valid non-negative integer; using default",
+    );
+    return DEFAULT_RATE_LIMIT_WARN_THRESHOLD;
+  }
+  return Number(raw);
+}
+
+const RATE_LIMIT_WARN_THRESHOLD = resolveRateLimitWarnThreshold();
 
 function warnIfRateLimitLow(response: Response, logFn: typeof logger): void {
   const remaining = response.headers.get("X-RateLimit-Remaining");
@@ -104,6 +121,11 @@ async function fetchAndUpdateCache(): Promise<void> {
 }
 
 export function startReleaseCacheWarmer(): void {
+  logger.info(
+    { rateLimitWarnThreshold: RATE_LIMIT_WARN_THRESHOLD },
+    "GitHub rate limit warn threshold configured",
+  );
+
   const interval = setInterval(() => {
     fetchAndUpdateCache().catch((err) => {
       logger.error({ err }, "Background cache refresh: unexpected error");
