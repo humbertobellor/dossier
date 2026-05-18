@@ -1,8 +1,9 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type RequestHandler } from "express";
 import { z } from "zod";
 import { Resend } from "resend";
 import rateLimit from "express-rate-limit";
 import { db, contactSubmissionsTable } from "@workspace/db";
+import { allowedOrigins } from "../lib/allowed-origins";
 
 const router: IRouter = Router();
 
@@ -14,6 +15,19 @@ const contactLimiter = rateLimit({
   message: { error: "Too many requests. Please try again later." },
 });
 
+const enforceOrigin: RequestHandler = (req, res, next) => {
+  const origin = req.headers["origin"];
+  if (origin === undefined || !allowedOrigins.has(origin)) {
+    req.log.warn(
+      { origin: origin ?? "(absent)" },
+      "Contact submission rejected — missing or disallowed origin",
+    );
+    res.status(403).json({ error: "Forbidden" });
+    return;
+  }
+  next();
+};
+
 const ContactBody = z.object({
   name: z.string().min(1).max(200),
   email: z.string().email().max(320),
@@ -21,7 +35,7 @@ const ContactBody = z.object({
   website: z.string().optional(),
 });
 
-router.post("/contact", contactLimiter, async (req, res) => {
+router.post("/contact", enforceOrigin, contactLimiter, async (req, res) => {
   const parsed = ContactBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: "Invalid request body" });
