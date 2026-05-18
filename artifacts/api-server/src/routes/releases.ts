@@ -10,6 +10,18 @@ const GITHUB_RELEASES_URL =
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const REFRESH_INTERVAL_MS = 4 * 60 * 1000;
 
+function githubHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+  };
+  const token = process.env.GITHUB_TOKEN;
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 interface CacheEntry {
   data: unknown;
   expiresAt: number;
@@ -22,12 +34,7 @@ async function fetchAndUpdateCache(): Promise<void> {
 
   let upstream: Response;
   try {
-    upstream = await fetch(GITHUB_RELEASES_URL, {
-      headers: {
-        Accept: "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-    });
+    upstream = await fetch(GITHUB_RELEASES_URL, { headers: githubHeaders() });
   } catch (err) {
     logger.error({ err }, "Background cache refresh: failed to reach GitHub API");
     return;
@@ -94,12 +101,7 @@ router.get("/releases", async (req, res) => {
   // No cache at all (cold start) — fetch live and populate the cache.
   let upstream: Response;
   try {
-    upstream = await fetch(GITHUB_RELEASES_URL, {
-      headers: {
-        Accept: "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-    });
+    upstream = await fetch(GITHUB_RELEASES_URL, { headers: githubHeaders() });
   } catch (err) {
     req.log.error({ err }, "Failed to reach GitHub API");
     res.status(502).json({ error: "Failed to fetch releases" });
