@@ -4,7 +4,8 @@
  * Repo-wide validation of font files. For every artifact under artifacts/ that
  * contains a public/fonts/ directory the script:
  *
- *   1. Scans all CSS files under that artifact's src/ directory (recursively).
+ *   1. Scans all CSS files under the full artifact directory (recursively),
+ *      excluding dist/, node_modules/, and .git/.
  *   2. Confirms every local url('/fonts/...') reference resolves to a file on
  *      disk in public/fonts/.
  *   3. Confirms every file in public/fonts/ is referenced by at least one
@@ -109,15 +110,15 @@ let overallFailed = false;
 
 for (const artifactName of artifactNames) {
   const fontsDir = join(artifactsDir, artifactName, "public", "fonts");
-  const srcDir = join(artifactsDir, artifactName, "src");
+  const artifactDir = join(artifactsDir, artifactName);
 
   console.log(`\n[check-fonts] Artifact: ${artifactName}`);
 
-  // Collect CSS files
-  const cssFiles = collectCssFiles(srcDir);
+  // Collect CSS files from the full artifact directory (excl. dist/, node_modules/, .git/)
+  const cssFiles = collectCssFiles(artifactDir);
   if (cssFiles.length === 0) {
     console.error(
-      `[check-fonts] ERROR: public/fonts/ exists but no CSS files found under ${rel(srcDir)}`
+      `[check-fonts] ERROR: public/fonts/ exists but no CSS files found under ${rel(artifactDir)}`
     );
     overallFailed = true;
     continue;
