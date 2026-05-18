@@ -6,6 +6,27 @@ const BRANCH = "main";
 const REPO_URL = `https://github.com/${OWNER}/${REPO}.git`;
 const API_BASE = "https://api.github.com";
 
+/**
+ * Pass --push (or PUSH_TO_GITHUB=1) to actually perform the push.
+ * Without an explicit opt-in the script exits 0 so that automated
+ * callers (e.g. the Project parallel runner) are always harmless.
+ */
+const PUSH_ENABLED =
+  process.argv.includes("--push") || process.env["PUSH_TO_GITHUB"] === "1";
+
+if (!PUSH_ENABLED) {
+  console.log("Push to GitHub — opt-in required.");
+  console.log("");
+  console.log("Run one of the following to actually push:");
+  console.log(
+    "  pnpm --filter @workspace/scripts run push-now",
+  );
+  console.log(
+    "  PUSH_TO_GITHUB=1 pnpm --filter @workspace/scripts run push-to-github",
+  );
+  process.exit(0);
+}
+
 function run(cmd: string, opts: { redact?: string } = {}): string {
   try {
     return execSync(cmd, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] }).trim();
@@ -86,7 +107,9 @@ try {
   console.error(msg);
   console.error("\nCommon causes:");
   console.error("  • GITHUB_TOKEN lacks the 'repo' scope");
-  console.error("  • The remote branch has commits not present locally (need to pull first)");
+  console.error(
+    "  • The remote branch has commits not present locally (need to pull first)",
+  );
   console.error("  • Network error — retry in a moment");
   process.exit(1);
 }

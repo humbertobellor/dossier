@@ -8,6 +8,7 @@
     "check-fonts": "tsx ./src/check-fonts.ts",
     "check-bundle-size": "tsx ./src/check-bundle-size.ts",
     "push-to-github": "tsx ./src/push-to-github.ts",
+    "push-now": "tsx ./src/push-to-github.ts --push",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
