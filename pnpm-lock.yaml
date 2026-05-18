@@ -253,6 +253,9 @@ importers:
 
   artifacts/humberto-bello:
     dependencies:
+      express:
+        specifier: ^5.2.1
+        version: 5.2.1
       i18next:
         specifier: ^26.0.6
         version: 26.0.6(typescript@5.9.3)
