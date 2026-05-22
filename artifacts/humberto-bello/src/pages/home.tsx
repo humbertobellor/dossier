@@ -25,7 +25,6 @@ import headshotWebp from "@assets/headshot-corp_1776959044728.webp";
 import headshotAvif from "@assets/headshot-corp_1776959044728.avif";
 import headshotWebp1x from "@assets/headshot-corp_1776959044728@1x.webp";
 import headshotAvif1x from "@assets/headshot-corp_1776959044728@1x.avif";
-import { ContactForm } from "../components/ContactForm";
 import { Changelog } from "../components/Changelog";
 
 /* ---- Wolknitive palette constants ---- */
@@ -1089,19 +1088,20 @@ export default function Home() {
                     fontWeight: 600,
                     padding: "10px 22px",
                     borderRadius: "var(--radius-sm)",
-                    background: "transparent",
-                    border: `1px solid ${V300}`,
-                    color: V700,
+                    background: TEAL,
+                    border: `1px solid ${TEAL}`,
+                    color: V50,
                     textDecoration: "none",
-                    transition: "border-color 0.15s, color 0.15s",
+                    boxShadow: "var(--shadow-2)",
+                    transition: "background 0.15s, border-color 0.15s",
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = TEAL;
-                    e.currentTarget.style.color = TEAL;
+                    e.currentTarget.style.background = TEAL_6;
+                    e.currentTarget.style.borderColor = TEAL_6;
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = V300;
-                    e.currentTarget.style.color = V700;
+                    e.currentTarget.style.background = TEAL;
+                    e.currentTarget.style.borderColor = TEAL;
                   }}
                   data-testid="cta-email"
                 >
@@ -1172,8 +1172,6 @@ export default function Home() {
                 </a>
               </div>
 
-              {/* Inline contact form */}
-              <ContactForm />
             </div>
           </FadeInSection>
         </div>
