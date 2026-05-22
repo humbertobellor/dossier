@@ -70,10 +70,10 @@ router.post("/contact", enforceOrigin, contactLimiter, async (req, res) => {
 
   const resend = new Resend(apiKey);
   const { error } = await resend.emails.send({
-    from: "Bert Bello Dossier <onboarding@resend.dev>",
+    from: "Bert Bello Dossier <contact@bertjbello.com>",
     to: "humberto.bello@protonmail.com",
     replyTo: [email],
-    subject: `New message from ${name} via humberto-bello.com`,
+    subject: `New message from ${name} via bertjbello.com`,
     text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
     html: `<p><strong>Name:</strong> ${escHtml(name)}</p><p><strong>Email:</strong> ${escHtml(email)}</p><hr/><p style="white-space:pre-wrap">${escHtml(message)}</p>`,
   });
