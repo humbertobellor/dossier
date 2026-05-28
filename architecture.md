@@ -390,23 +390,26 @@ Brechas identificables (relevantes para una migración):
 
 ---
 
-## 11. Mapa de impacto para el plan de migración a Astro + `/cv`
+## 11. Mapa de impacto para el módulo `/cv`
 
-Esta sección conecta la arquitectura documentada con el plan de migración
-(`propuesta_optimizacion.md`):
+Esta sección conecta la arquitectura documentada con el plan refinado en
+`propuesta_optimizacion.md`. **Decisión arquitectónica clave**: no se
+migra el framework. Se añade `/cv` al stack actual como HTML estático
+generado en build desde `cv.md`.
 
-| Hecho arquitectónico | Implicación para el plan |
+| Hecho arquitectónico | Implicación para `/cv` |
 |---|---|
-| `Changelog.tsx` consume `/api/releases` vía TanStack Query | **El frontend no es SSG puro** — hay que decidir entre mantener `api-server`, build-time fetch o llamar a GitHub directo |
-| Contrato Orval `openapi.yaml → api-zod / api-client-react` | La migración a Astro debe seguir consumiendo `@workspace/api-client-react` como isla cliente (React island); no se puede simplemente "des-Reactizar" el Changelog |
-| `server.mjs` aplica CSP/HSTS/COOP | Astro estático puro pierde estas cabeceras; o se replican en el host, o se mantiene un adapter Node |
-| i18n EN/ES/DE con lazy loading de ES/DE | Astro requiere routing i18n nativo o conservar i18next como isla — decisión bloqueante antes de Fase 3 |
-| `home.tsx` 1279 LOC con Radix + Framer + i18n + react-query | "Transformar a `.astro`" no es 1:1; requiere despiece previo en bloques (Astro puros vs islas focalizadas) |
-| `attached_assets/` tiene 1 sola imagen referenciada (headshot, 4 archivos, 2 anchos: 350w + 700w) | Las 6 escalas globales del plan original (320/480/768/1080/1440/2160) son sobreingeniería; alcance real = mover/renombrar 4 archivos |
-| `sharp@^0.34.5` en devDeps del root | El convertidor externo (`image-conversor.netlify.app`) propuesto en Fase 4 es innecesario |
-| CI sin job de `build` ni `test` | Si Fase 5 bis añade Lighthouse/Playwright/a11y gates, hay que extender `.github/workflows/ci.yml` |
-| `mockup-sandbox` es un workspace aparte | Fuera del scope del módulo `/cv` salvo decisión explícita |
-| `humberto-bello` ya tiene `Humberto_Bello_Resume.pdf` estático | El nuevo `cv.md` SSOT **reemplaza** ese PDF; el botón de descarga ya existe (líneas 288, 354 de `home.tsx`) — solo cambia el destino |
+| Performance ya optimizada (Beasties, hero preload, font preload, manual chunks, AVIF+WebP) — §6 | No tocar `/`. Cualquier cambio en home arriesga regresión sobre un perfil ya bueno |
+| `Changelog.tsx` consume `/api/releases` vía Orval/TanStack Query — §4 | Queda intacto. `/cv` es una ruta independiente que no consume API |
+| `server.mjs` aplica CSP/HSTS/COOP a todo `/*` — §5, §10 | `/cv/index.html` hereda las mismas cabeceras al servirse desde el mismo Express; cero configuración extra |
+| SEO completo en `index.html` con JSON-LD `ProfilePage` — §9 | El `/cv/index.html` reutiliza el bloque SEO (canonical propio = `/cv`) y añade un JSON-LD adicional tipo `CreativeWork`/`Resume` |
+| `home.tsx` ya tiene 2 botones de descarga (líneas 288, 354) apuntando a `/Humberto_Bello_Resume.pdf` — §9 | Mantener el PDF estático actual (cambiando luego destino a `/cv` o al PDF regenerado en v2) |
+| `attached_assets/` tiene 1 sola imagen referenciada (headshot, 4 archivos: 350w + 700w) — §9 | Renombrado semántico = mover/renombrar 4 archivos + actualizar 4 imports y 2 regex |
+| `sharp@^0.34.5` en devDeps del root | Disponible si en v2 se quiere prerender PDF con Playwright (que usa Chromium + posiblemente sharp para post-procesar) |
+| `@workspace/scripts` ya existe con tsx + check-fonts + check-bundle-size — §2, §8 | Añadir `scripts/src/build-cv.ts` aquí; encaja con el patrón establecido |
+| `mockup-sandbox` es un workspace aparte | Fuera del scope |
+| Vite ya copia `public/*` a `dist/public/*` (`server.mjs` lo sirve) | Escribir `artifacts/humberto-bello/public/cv/index.html` desde el build script basta para que `/cv` quede servido en producción |
+| CI hoy solo tiene `check-fonts`, `typecheck`, `lint` — §8 | Sumar un job opcional `build-cv-smoke` que ejecute el build script y verifique que `cv/index.html` se genera y valida HTML — pineado a SHA |
 
 ---
 
