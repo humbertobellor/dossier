@@ -6,7 +6,49 @@
 
 ---
 
-## 1. Plan refinado
+## 1. Contexto: por qué convertir el PDF a `cv.md`
+
+Hoy el CV vive como **PDF estático** (`artifacts/humberto-bello/public/Humberto_Bello_Resume.pdf`)
+exportado a mano desde un PPTX original
+(`attached_assets/Humberto_Bello_Dossier_*.pptx`). Dos `<a download>` en
+`home.tsx` (líneas 288, 354) sirven ese archivo. Mover la fuente de
+verdad a `cv.md` aporta beneficios concretos:
+
+- **SEO indexable como página**. Un PDF se indexa como documento separado
+  y no alimenta la densidad temática del dominio. Una ruta `/cv` con el
+  contenido en HTML al primer byte es indexable como **página del sitio**:
+  aparece en snippets, se posiciona por queries específicas del CV
+  ("AI Architect Humberto Bello", "Principal Architect Atlanta", etc.) y
+  refuerza el ranking del sitio principal. Es exactamente el problema que
+  el plan original intentaba resolver con Astro — pero se resuelve sin
+  cambiar el framework.
+- **Una sola fuente de verdad**. Hoy hay **cuatro copias** del mismo
+  contenido desincronizables a mano: el PDF servido, el PPTX original,
+  el JSON-LD `ProfilePage` en `index.html` (`jobTitle`, `knowsAbout`,
+  `hasOccupation`, `sameAs`) y los textos del `home.tsx` (skills, clients,
+  experiencia). Con `cv.md` el frontmatter alimenta el JSON-LD y el cuerpo
+  alimenta la página renderizada — el PPTX/PDF dejan de ser fuente y
+  pasan a ser **artefactos generados**.
+- **Edición trivial**. Cambiar un puesto, añadir una skill o actualizar
+  un cliente es editar Markdown + commit. Hoy implica abrir PPTX, editar,
+  exportar, sustituir el PDF y, si toca, sincronizar a mano el JSON-LD
+  y los strings del home.
+- **PDF descargable derivado, no fuente**. El PDF se genera desde el
+  mismo `cv.md` vía `window.print()` con CSS print embebido — siempre
+  coherente con la versión web, sin riesgo de divergencia.
+- **Responsive y accesible**. HTML escala a mobile, soporta lectores de
+  pantalla, respeta zoom del usuario y puede heredar preferencias del
+  sistema. El PDF actual no — es una imagen rígida de tamaño carta.
+- **Versionado significativo**. `git diff` sobre `cv.md` muestra cambios
+  reales (líneas añadidas/eliminadas, secciones reordenadas). Sobre un
+  PDF muestra solo un diff binario opaco.
+
+El PDF actual permanece en el repo durante la transición (por si hay enlaces
+externos cacheados); tras validar `/cv` se puede retirar.
+
+---
+
+## 2. Plan refinado
 
 ### Paso 1 — Diseñar `cv.md` (SSOT)
 
@@ -80,7 +122,7 @@
 
 ---
 
-## 2. Riesgos
+## 3. Riesgos
 
 | Riesgo | Probabilidad | Impacto | Mitigación |
 |---|---|---|---|
@@ -89,4 +131,6 @@
 | Renombrado del headshot rompe `heroPreloadPlugin` por el regex | Media | Bajo (build falla inmediatamente) | Actualizar regex en el mismo commit y validar que `vite build` siga inyectando el `<link rel="preload">` |
 | `/cv` no se añade a `sitemap.xml` y queda fuera del índice | Baja | Alto | Editar `sitemap.xml` en el mismo commit del Paso 4 |
 | `cv.md` desincronizado del JSON-LD de `index.html` (`jobTitle`, `knowsAbout`…) | Media | Medio | El build script lee del mismo frontmatter de `cv.md` y emite ambos JSON-LD; idealmente `index.html` también pasa a inyectarse vía script para que `cv.md` sea la única fuente |
+| Enlaces externos cacheados al PDF antiguo (`/Humberto_Bello_Resume.pdf`) se rompen al retirarlo | Media | Bajo-Medio | Mantener el PDF en `public/` durante la transición; opcionalmente redirigir esa ruta a `/cv` cuando se elimine |
 | Fuentes Bogart `-trial` en producción (legal) | Alta existente | Bajo-Medio | Orthogonal al cambio, pero registrar para resolver antes de un despliegue público estable |
+
