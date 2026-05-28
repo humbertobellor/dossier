@@ -3,35 +3,56 @@
 > Revisión técnica del plan propuesto para la migración del repo `dossier`
 > (https://github.com/humbertobellor/dossier) a Astro SSG con un nuevo módulo
 > `/cv` alimentado por un `cv.md` SSOT.
+>
+> **Esta propuesta se apoya en `architecture.md`** (estado actual del repo,
+> diagramas Mermaid, contrato OpenAPI, flujos de datos, seguridad). Léelo
+> primero — todas las referencias `§N` apuntan a sus secciones.
 
 ---
 
 ## 1. Veredicto general
 
-**Viable, con condiciones.** El esqueleto de fases es razonable y el patrón de
-ledger (`migration_progress.md`) es buena disciplina. Sin embargo, varios
-supuestos del plan no se sostienen al confrontarlos con el estado real del
-repo, y hay decisiones críticas que el plan deja en aire (formato de
-generación del PDF, i18n existente, cabeceras de seguridad, manejo de
-`attached_assets`). Antes de ejecutar, conviene cerrar esos huecos.
+**Viable, con condiciones.** El esqueleto de fases es razonable y el patrón
+de ledger (`migration_progress.md`) es buena disciplina. Sin embargo, al
+confrontar el plan con la arquitectura real (`architecture.md`) aparecen
+**dos supuestos rotos** y **varios huecos**:
+
+- **Supuesto roto 1**: "el sitio es estático". Falso — `Changelog.tsx`
+  consume `/api/releases` vía TanStack Query → `api-server` Express → GitHub
+  con cache en memoria y warmer en background (`architecture.md` §4). Una
+  migración a "Astro SSG puro" no se sostiene sin decidir qué hacer con ese
+  flujo.
+- **Supuesto roto 2**: "el sitio actual no es un CV". También impreciso —
+  ya es un dossier profesional con OG/JSON-LD, y ya descarga
+  `Humberto_Bello_Resume.pdf` desde dos botones en `home.tsx`
+  (`architecture.md` §9, §11).
+- **Huecos**: PDF (cómo se genera), i18n EN/ES/DE (ignorada en el plan),
+  cabeceras de seguridad (CSP/HSTS viven en `server.mjs`, no en el host),
+  contrato Orval (cómo sobrevive a la migración), `mockup-sandbox` (scope).
 
 ---
 
-## 2. Estado real del repositorio (relevante para el plan)
+## 2. Hechos arquitectónicos clave (relevantes para el plan)
 
-| Pieza | Estado actual | Implicación para la migración |
+Resumen — el detalle completo está en `architecture.md`. La tabla mapea cada
+hecho a su consecuencia para la migración.
+
+| # | Hecho arquitectónico (ref) | Implicación para el plan |
 |---|---|---|
-| Sitio principal | `artifacts/humberto-bello`: React 19 + Vite 7 + Tailwind 4 + Radix UI (~50 componentes) + Framer Motion + wouter + React Query + i18next (EN/ES/DE) | Migración a Astro **no es 1:1**; islas React inevitables o rewrite parcial |
-| Página única | `src/pages/home.tsx`: **1279 LOC** | Trocear en componentes Astro/islas antes de migrar |
-| CV actual | `public/Humberto_Bello_Resume.pdf` ya existe (estático, sin ruta `/cv`) | El plan debe enmarcarse como **reemplazar el PDF estático por SSOT en Markdown**, no como "añadir CV donde no había" |
-| SEO | `index.html` ya trae Title/Description/OG/Twitter/canonical + JSON-LD `ProfilePage` completo + `sitemap.xml` + `robots.txt` | Hay que **trasladar el JSON-LD** (el plan solo menciona meta-tags) |
-| Performance | Beasties (critical CSS), Hero AVIF preload plugin, Bogart font preload plugin, manual chunks `vendor-react`/`vendor-i18n`, AVIF+WebP `@1x`/full | Las ganancias de Astro serán **marginales** si se conservan las islas React |
-| Imágenes en uso real | **Una sola** — `headshot-corp_1776959044728.{avif,webp}` + `@1x.{avif,webp}`, en 2 anchos (**350w** y **700w**, dictados por los `sizes` del `<picture>`). `opengraph.jpg` (meta), `favicon.svg` (vector) y fuentes woff2. Resto de `attached_assets/` (PPTX, PDFs viejos, ZIP, screenshots, jpegs sueltos) **no se referencia desde código** — es source material | El alcance real de la "optimización de imágenes" es **mover y renombrar 4 archivos** y actualizar 4 imports. Las imágenes nuevas que añada `/cv` se procesan por sus propios breakpoints |
-| Procesamiento de imagen | `sharp@^0.34.5` ya está en devDependencies del root | **No hace falta un convertidor externo**; Astro `<Image>` usa sharp internamente. Para una sola imagen ya generada en AVIF+WebP a 1x/2x, basta con moverla y renombrarla |
-| Seguridad | `server.mjs` aplica CSP, HSTS, COOP, X-Frame-Options, cache headers diferenciados | Sin esto, un Astro estático puro pierde las cabeceras; hay que mover la CSP al host o usar adapter Node |
-| i18n | i18next + LanguageDetector con bundle EN inline y ES/DE lazy | **El plan no lo menciona en ninguna fase** — gap crítico |
-| Fuentes | Bogart `-trial` (versión de prueba) | Revisar licencia antes de despliegue público (fuera del scope del plan, pero a registrar) |
-| Monorepo | pnpm workspaces; `artifacts/humberto-bello` consume `@workspace/api-client-react` | Integrar Astro respetando el catálogo de versiones (`pnpm-workspace.yaml`) |
+| A | Monorepo pnpm con 7 paquetes; `humberto-bello` consume `@workspace/api-client-react` generado por Orval desde `lib/api-spec/openapi.yaml` (`architecture.md` §2, §3) | La migración **debe integrarse al catálogo** de versiones y **conservar el codegen** Orval; los hooks generados se siguen consumiendo desde una isla React |
+| B | `Changelog.tsx` llama `useGetReleases()` → `/api/releases` → `api-server` (cache 5 min, warmer 4 min, monitor de rate-limit GitHub) (`architecture.md` §4, §7) | El frontend **no es SSG puro**. Decisión bloqueante: (1) mantener `api-server`, (2) build-time fetch de GitHub, (3) cliente llama a GitHub directo |
+| C | `server.mjs` del frontend aplica CSP, HSTS, COOP, X-Frame-Options y cache headers diferenciados (`architecture.md` §5, §10) | Astro estático puro pierde estas cabeceras. Replicarlas en host (`_headers`, `vercel.json`) o mantener adapter Node |
+| D | `home.tsx` = **1279 LOC**, importa Radix (~50), Framer Motion (lazy), i18next (EN inline / ES,DE lazy), TanStack Query (Changelog) (`architecture.md` §6) | "Transformar a `.astro` 1:1" no existe. Hay que despezar en bloques: estáticos (Astro nativo) vs interactivos (islas React focalizadas) |
+| E | SEO presente: title, description, keywords, canonical, OG completo, Twitter Card, **JSON-LD `ProfilePage`** con `Person.knowsAbout/hasOccupation/sameAs`, `sitemap.xml`, `robots.txt` (`architecture.md` §9) | Inventario SEO a preservar **incluye el JSON-LD** (el plan original solo menciona meta-tags) |
+| F | Performance ya optimizada: Beasties (critical CSS), `heroPreloadPlugin`, `bogartPreloadPlugin`, manual chunks `vendor-react`/`vendor-i18n`, AVIF+WebP responsive (`architecture.md` §6) | Ganancia esperada de Astro en CWV es **marginal** salvo que se elimine React por completo. Motivo real de Astro: DX + content collections, no LCP/INP |
+| G | Imágenes en uso real: **1 sola** (headshot, 4 archivos, **350w + 700w**). `opengraph.jpg` y `favicon.svg` intactos. Resto de `attached_assets/` (PPTX, PDFs viejos, ZIP, screenshots, jpegs) **no se referencia** — source material (`architecture.md` §9) | Fase 4 = mover/renombrar 4 archivos + actualizar 6 referencias. Las 6 escalas globales del plan son sobreingeniería |
+| H | `sharp@^0.34.5` ya está en devDeps del root (`architecture.md` §9 implícito) | El convertidor externo (`image-conversor.netlify.app`) es innecesario; Astro `<Image>` y/o script local con sharp cubren el caso |
+| I | i18n EN/ES/DE con LanguageDetector, EN inline, ES/DE lazy (`architecture.md` §6) | **El plan no lo menciona en ninguna fase** — gap bloqueante. Decisión: routing i18n nativo de Astro (`src/pages/[lang]/...`) o isla i18next |
+| J | CI tiene 3 jobs path-filtered (check-fonts, typecheck, lint), `uses:` pineados a SHA, `minimumReleaseAge: 1440`. **No hay job de `build` ni `test`** (`architecture.md` §8) | Si Fase 5 bis añade Lighthouse/Playwright/a11y, hay que **extender CI** y mantener la convención SHA-pinning |
+| K | `mockup-sandbox` es un workspace independiente con su propio React+Vite+Radix (`architecture.md` §2) | **Fuera de scope** salvo decisión explícita |
+| L | `public/Humberto_Bello_Resume.pdf` ya se descarga desde `home.tsx` (líneas 288, 354) (`architecture.md` §9, §11) | `/cv` con `cv.md` SSOT **reemplaza** ese PDF; los botones existentes solo cambian destino |
+| M | Fuentes Bogart son la versión `-trial` (`architecture.md` §10) | Riesgo legal en despliegue público; resolver licencia antes (fuera del scope técnico) |
+| N | `api-server` no instancia rate-limit propio (pese a tener `express-rate-limit` en deps); CSP permite `'unsafe-inline'`/`'unsafe-eval'` (`architecture.md` §10) | Oportunidad: la migración puede endurecer CSP al eliminar Replit dev plugins y reducir inline scripts |
 
 ---
 
@@ -121,16 +142,21 @@ generación del PDF, i18n existente, cabeceras de seguridad, manejo de
 
 Antes de empezar la Fase 0 hay que decidir:
 
-1. **Adapter de Astro**: estático puro (`output: 'static'`) + headers en el host, o `@astrojs/node` manteniendo `server.mjs`.
-2. **Estrategia de generación de PDF**:
+1. **Releases / `api-server` (BLOQUEANTE — derivada del hecho B)**. Tres caminos:
+   - **A. Mantener `api-server` desplegado** y que Astro lo siga consumiendo desde una isla React `<Changelog client:visible>` con `@workspace/api-client-react`. Conserva caché, rate-limit monitor y backend propio. **Recomendada** — preserva la arquitectura actual sin sorpresas.
+   - **B. Build-time fetch**: en cada build de Astro, leer GitHub e inyectar releases en HTML. Pierde frescura (rebuild para reflejar nuevas releases) y rompe el flujo de codegen Orval para `useGetReleases`. Solo viable si se reduce la frecuencia esperada de releases.
+   - **C. Cliente llama a GitHub directo**: elimina `api-server`. Rate limit anónimo (60 req/h/IP), no hay caché ni token. **Descartar** salvo prototipo.
+2. **Adapter de Astro**: estático puro (`output: 'static'`) + headers replicados en host (`_headers`/`vercel.json`), o `@astrojs/node` reusando `server.mjs`. Dependiente de la decisión 1: si se elige A, basta con estático (el backend sigue separado).
+3. **Estrategia de generación de PDF**:
    - **A. Print CSS + `window.print()`** — cero infra, calidad razonable, el usuario decide márgenes. Recomendada para MVP.
-   - **B. Playwright en build** — genera `humberto-bello-cv.pdf` estático en cada deploy desde `/cv?print=1`. Mejor fidelidad. Recomendada para v2.
+   - **B. Playwright en build** — genera `humberto-bello-cv.pdf` estático en cada deploy desde `/cv?print=1`. Mejor fidelidad. Requiere extender CI (que hoy no tiene job de build, hecho J). Recomendada para v2.
    - **C. Cliente con `html2pdf.js`** — descartar (bundle ~150KB, fidelidad pobre con custom fonts).
-3. **i18n**: mantener i18next como isla, o adoptar el routing i18n nativo de Astro (`src/pages/[lang]/...`)?
-4. **Alcance del rewrite**: ¿home entera a `.astro` con islas focalizadas, o home como isla raíz `client:load` (migración trivial sin ganancia de perf)?
-5. **Licencia Bogart**: las fuentes son `-trial`. ¿Compramos licencia, sustituimos, o se mantiene fuera de scope (riesgo legal)?
+4. **i18n**: mantener i18next como isla `client:load` (bajo esfuerzo de migración, conserva 3 locales con lazy loading actual), o adoptar el routing i18n nativo de Astro (`src/pages/[lang]/...`, mejor para SEO con `hreflang`, requiere rewrite del switcher).
+5. **Alcance del rewrite de `home.tsx` (1279 LOC, hecho D)**: home entera a `.astro` con islas focalizadas (Changelog, FadeIn/Framer, switcher de idioma), o home como isla raíz `client:load` (migración trivial sin ganancia de perf — equivalente a "Astro shell" sobre el bundle actual).
+6. **Scope de `mockup-sandbox`**: queda fuera de la migración salvo decisión explícita (hecho K). Confirmar.
+7. **Licencia Bogart `-trial`** (hecho M): comprar, sustituir, o aceptar el riesgo legal antes del despliegue.
 
-Sin estas 5 decisiones, las fases siguientes producirán código que habrá que reescribir.
+Sin estas 7 decisiones, las fases siguientes producirán código que habrá que reescribir.
 
 ---
 
@@ -138,32 +164,39 @@ Sin estas 5 decisiones, las fases siguientes producirán código que habrá que 
 
 ### Fase 0 bis — Decisiones de arquitectura + inventario completo
 
-- Resolver las 5 decisiones de la sección 4.
-- Inventario SEO completo: title, description, OG, Twitter, canonical, **JSON-LD ProfilePage**, sitemap, robots, hreflang (si se mantiene i18n).
-- Diseñar `cv.md` con frontmatter validable vía `astro:content` schema (Zod).
+- Resolver las **7 decisiones** de la sección 4 (incluida la del `api-server`).
+- Inventario SEO completo: title, description, OG, Twitter, canonical, **JSON-LD ProfilePage**, sitemap, robots, hreflang (si se mantiene i18n con routing nativo).
+- Diseñar `cv.md` con frontmatter validable vía `astro:content` schema (Zod). Reutilizar las claves del JSON-LD existente (`jobTitle`, `knowsAbout`, `sameAs`, `hasOccupation`) para evitar duplicar verdad.
 - **Output**: `migration_progress.md` con decisiones grabadas + `cv.md` schema borrador.
 
-### Fase 1 bis — Arquitectura documentada + despiece de `home.tsx`
+### Fase 1 bis — Arquitectura documentada + despiece de `home.tsx` ✅ parcialmente hecha
 
-- `architecture.md` con:
-  - Diagrama del monorepo (`artifacts/`, `lib/`, `scripts/`).
-  - Mermaid `cv.md → /cv (web) + cv.md → PDF`.
-  - Mapa de qué bloques de `home.tsx` (1279 LOC) pasan a Astro nativo vs isla React.
-  - Estrategia de cabeceras de seguridad post-migración.
+- ✅ `architecture.md` ya existe con: monorepo, contrato Orval, runtime data flow, topología de despliegue, interior del frontend, interior del backend, CI, inventario SEO/assets, postura de seguridad. Mantenerlo vivo: actualizar tras cada fase.
+- Pendiente: **mapa explícito** de `home.tsx` (1279 LOC) → bloques Astro nativos vs islas React focalizadas. Sugerido:
+  - **Astro nativo**: Hero (texto + img), Experience (lista), Clients (grid), CTA (links a `/cv` y `mailto:`), Footer.
+  - **Islas React**: `<Changelog client:visible>` (consume `@workspace/api-client-react`), `<FadeIn client:visible>` (Framer Motion), `<LanguageSwitcher client:load>` (si se mantiene i18next), `<Toaster>` solo si se usa.
+- Documentar estrategia de cabeceras de seguridad post-migración (host vs adapter Node) según la decisión 2.
 
 ### Fase 2 bis — Bootstrap Astro + componentes base
 
-- Crear `artifacts/dossier-astro/` (o reescribir `humberto-bello/` in-place según se prefiera).
-- `BaseHead.astro` con todos los meta + JSON-LD parametrizable.
-- `astro:content` collection para `cv` con schema Zod.
-- Routing i18n decidido en Fase 0 bis.
-- Smoke test: la home renderiza con SSG y pasa Lighthouse igual o mejor que el baseline.
+- Crear `artifacts/dossier-astro/` como **paquete nuevo** del workspace (respeta el patrón `@workspace/*` y el catálogo `pnpm-workspace.yaml`). Coexiste con `humberto-bello/` durante la migración; al final se decide qué hacer con el legado.
+- Integrar Astro en el monorepo: añadir las versiones de `astro`, `@astrojs/react`, `@astrojs/sitemap`, `@astrojs/mdx` al `catalog:` para mantener convención.
+- **Conservar el contrato Orval**: `dossier-astro` consume `@workspace/api-client-react` desde una isla React (no regenerar; los hooks existen). Documentar que el Changelog sigue siendo React island.
+- `BaseHead.astro` parametrizable con todos los meta + JSON-LD (reutilizar el bloque actual textualmente — está bien construido).
+- `astro:content` collection `cv` con schema Zod alineado al frontmatter de `cv.md`.
+- Routing i18n según decisión 4 (nativo Astro o isla i18next).
+- Smoke test: home renderiza con SSG (sin Changelog aún) y pasa Lighthouse igual o mejor que el baseline actual.
 
 ### Fase 3 bis — Migración incremental por secciones
 
-- Migrar `home.tsx` sección por sección (hero, experience, clients, CTA), con baseline visual de Playwright en cada paso para evitar regresiones.
-- Implementar `/cv` consumiendo el frontmatter + body del `cv.md`.
-- Implementar generación de PDF según decisión Fase 0 bis (Print CSS o Playwright build).
+- Migrar `home.tsx` sección por sección siguiendo el mapa de Fase 1 bis. **Snapshot Playwright en cada PR** comparado contra `humberto-bello/` baseline para detectar regresiones visuales.
+- Migrar el `Changelog` como isla: reutilizar literalmente el componente actual (`Changelog.tsx`) envuelto en `<QueryClientProvider>` propio, con `client:visible`. Cero cambios en `@workspace/api-client-react` ni en `api-server`.
+- Implementar `/cv`:
+  - Página Astro consume `cv.md` vía content collections (`getEntry('cv', '...')`).
+  - Layout web hereda el shell del sitio (header/footer).
+  - Layout de impresión (`/cv?print=1` o ruta separada `/cv/print`) con CSS `@media print` y `@page` para márgenes — completamente aislado del shell web.
+- Generación de PDF según decisión 3 (Print CSS MVP o Playwright build v2).
+- Actualizar los `<a download>` de `home.tsx` (líneas 288, 354) para apuntar al PDF generado desde `cv.md`, o reemplazarlos por un link a `/cv` con botón "Descargar" interno.
 
 ### Fase 4 bis — Reorganización mínima de assets (alcance real)
 
@@ -190,12 +223,16 @@ Tareas concretas:
 
 ### Fase 5 bis — Validaciones y release
 
-- Lighthouse CI con presupuesto y comparativa antes/después.
-- Playwright visual regression en 3 viewports para home y `/cv`.
-- Test funcional del flujo de descarga del PDF.
-- a11y con axe-core sobre home y `/cv`.
-- Configurar CSP/HSTS/COOP en el host (o validar que adapter Node mantiene `server.mjs`).
-- Regenerar `sitemap.xml` con `/cv` y hreflang si aplica.
+- **Extender `.github/workflows/ci.yml`** (hoy solo tiene check-fonts/typecheck/lint, hecho J) con jobs nuevos pineados a SHA siguiendo la convención del repo:
+  - `build`: `pnpm -r --filter ./artifacts/dossier-astro run build` y `pnpm --filter @workspace/api-server run build`.
+  - `lighthouse`: presupuesto LCP < 2.5s, CLS < 0.1, INP < 200ms, TBT < 200ms — comparativa contra baseline `humberto-bello/`.
+  - `visual-regression`: Playwright screenshots en 3 viewports (móvil 375, tablet 768, desktop 1280) para `/`, `/cv`, `/cv/print`.
+  - `a11y`: axe-core sobre las mismas rutas (foco especial en el botón de descarga del PDF y el switcher de idioma).
+- **Smoke test del PDF**: que el archivo se genere, peso razonable (< 500 KB esperado para CV de 1–2 páginas), primera página contenga el nombre, fuentes embebidas correctamente.
+- **Smoke test del Changelog**: que la isla hidrate, `useGetReleases()` ejecute, y los datos cacheados de `api-server` rendericen. Validar también que el frontend nuevo está incluido en la `allowed-origins.ts` de `api-server` para no romper CORS.
+- **Cabeceras de seguridad** (CSP/HSTS/COOP de `server.mjs`, hecho C) → reconfigurar en el host (`_headers`/`vercel.json`) si Astro es estático, o validar que adapter Node sirve las mismas. **Oportunidad de endurecer CSP** (hecho N) eliminando `'unsafe-inline'`/`'unsafe-eval'` cuando se quiten los plugins de Replit.
+- **Regenerar `sitemap.xml`** con `/cv` y `hreflang` si aplica. Usar `@astrojs/sitemap` (auto-genera) en lugar del XML manual actual.
+- Validar que `pnpm --filter @workspace/api-spec run codegen` sigue funcionando y que `dossier-astro` consume los hooks generados sin friction.
 
 ---
 
@@ -203,29 +240,40 @@ Tareas concretas:
 
 | Riesgo | Probabilidad | Impacto | Mitigación |
 |---|---|---|---|
+| Asumir SSG puro y romper el flujo `Changelog → /api/releases → GitHub` | Alta si no se toma decisión 1 | Alto | Mantener `api-server` y consumirlo desde una isla React (decisión 1 opción A) |
+| Romper CORS al cambiar de origen del frontend | Alta | Medio | Añadir el nuevo origen a `api-server/src/lib/allowed-origins.ts` antes del primer deploy |
+| Re-generar `lib/api-zod`/`lib/api-client-react` manualmente y desincronizar con `openapi.yaml` | Media | Alto | Nunca editar `generated/`; usar `pnpm --filter @workspace/api-spec run codegen` |
 | Pérdida de CWV al introducir islas mal calibradas | Media | Alto | Lighthouse CI gate antes de mergear |
-| Romper SEO (perder JSON-LD o canonical) | Media | Alto | Test automatizado de meta-tags en build |
-| PDF generado con fonts rotas (Bogart custom) | Alta | Medio | Embeber fuentes en el PDF o usar Playwright con esperas de `document.fonts.ready` |
-| `attached_assets/` movido entero rompe referencias en docs/scripts | Eliminado | — | Decisión cerrada: solo los 4 archivos del headshot se mueven; el resto se queda |
+| Romper SEO (perder JSON-LD o canonical) | Media | Alto | Test automatizado de meta-tags en build; reutilizar literalmente el bloque actual de `index.html` |
+| PDF generado con fonts rotas (Bogart custom) | Alta | Medio | Embeber fuentes en el PDF; con Playwright esperar `document.fonts.ready` antes de imprimir |
+| Despliegue estático pierde cabeceras CSP/HSTS/COOP de `server.mjs` | Alta si Astro `output: 'static'` | Alto | Replicar headers en host (`_headers`/`vercel.json`) o mantener adapter Node |
+| Fuentes Bogart `-trial` en producción | Alta | Bajo-Medio (legal) | Resolver licencia antes del primer deploy público (decisión 7) |
+| CI sin job de build/test → regresiones que solo se ven en deploy | Alta | Alto | Añadir jobs `build`, `lighthouse`, `visual-regression`, `a11y` (Fase 5 bis) |
 | Generar escalas de imagen no usadas por ningún breakpoint | Alta si se sigue el plan original | Bajo (gasta build time, no rompe) | Limitar `widths` a los anchos que dictan los `sizes` reales del layout (350w + 700w para el headshot) |
-| i18n se rompe durante migración | Alta si no se planifica | Alto | Decidir routing i18n en Fase 0 bis, no en Fase 3 |
-| `/clear` entre fases pierde decisiones | Alta | Medio | Ledger explícito + commit por fase con notas en el mensaje |
+| `attached_assets/` movido entero rompe referencias en docs/scripts | Eliminado | — | Decisión cerrada: solo los 4 archivos del headshot se mueven; el resto se queda |
+| i18n se rompe durante migración | Alta si no se planifica | Alto | Decidir routing i18n en Fase 0 bis, no en Fase 3 (decisión 4) |
+| `/clear` entre fases pierde decisiones | Alta | Medio | Ledger explícito + commit por fase con notas en el mensaje; `architecture.md` se mantiene vivo |
 | Servicio externo de conversión de imágenes no reproducible | Alta | Medio | Usar `sharp` local (ya está en devDeps) |
+| `mockup-sandbox` queda olvidado y diverge | Media | Bajo | Confirmar en decisión 6 que queda fuera; documentar en `architecture.md` |
 
 ---
 
 ## 7. Recomendación final
 
 **Adoptar el plan con las correcciones de las secciones 3, 4 y 5 de este
-documento.** En particular:
+documento, y usar `architecture.md` como línea base viva** que se actualiza
+en cada fase. En particular:
 
-1. Cerrar las 5 decisiones de la sección 4 **antes** de tocar código.
-2. Reemplazar el convertidor externo por `sharp` / `<Image>` de Astro; aplicarlo **solo** a imágenes que efectivamente se rendericen.
-3. Mover **solo los 4 archivos del headshot** de `attached_assets/`; el resto (PPTX, PDFs viejos, ZIP, screenshots) no se procesa. Derivar `widths` de los `sizes` reales del layout (para el headshot actual: 350w + 700w, no las 6 escalas globales del plan original).
-4. Incluir i18n y JSON-LD en el inventario desde Fase 0.
-5. Definir el método de generación de PDF antes de Fase 3.
-6. Añadir gates de Lighthouse, visual regression y a11y en Fase 5.
+1. Cerrar las **7 decisiones** de la sección 4 **antes** de tocar código — en particular la #1 (`api-server`) porque condiciona el adapter de Astro, la CSP y el alcance de la Fase 3.
+2. **No romper el contrato Orval**: `dossier-astro` consume `@workspace/api-client-react` como isla; el codegen no se modifica.
+3. Reemplazar el convertidor externo por `sharp` / `<Image>` de Astro; aplicarlo **solo** a imágenes que efectivamente se rendericen.
+4. Mover **solo los 4 archivos del headshot** de `attached_assets/`; el resto (PPTX, PDFs viejos, ZIP, screenshots) no se procesa. Derivar `widths` de los `sizes` reales del layout (para el headshot actual: 350w + 700w, no las 6 escalas globales del plan original).
+5. Incluir i18n y JSON-LD en el inventario desde Fase 0.
+6. Definir el método de generación de PDF antes de Fase 3.
+7. **Extender CI** (hoy sin build/test) con jobs nuevos en Fase 5 bis, manteniendo la convención de SHA-pinning.
+8. Decidir destino de las cabeceras CSP/HSTS/COOP (host vs adapter Node) antes de Fase 3.
 
 Con esas correcciones el plan tiene buena probabilidad de ejecutarse sin
 sorpresas. Sin ellas, la Fase 3 se atascará en decisiones de arquitectura
-que debieron tomarse antes.
+que debieron tomarse antes — especialmente la del `api-server`, que es la
+brecha más grande entre el plan original y la arquitectura real del repo.
