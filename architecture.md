@@ -378,24 +378,106 @@ Lo que **no** se referencia y por tanto **no debe procesarse**:
 | Pre-commit | Husky + lint-staged | `.husky/`, `.lintstagedrc.mjs` |
 | Modelo STRIDE | `threat_model.md` (Spoofing/Tampering/Info Disclosure/DoS/EoP) | `threat_model.md` |
 
-Brechas identificables (relevantes para una migración):
+Brechas identificables (orthogonales al módulo `/cv`, registradas para
+futuro):
 - `api-server` **no tiene rate-limit propio** en endpoints públicos
   (`express-rate-limit` está en dependencies pero no se instancia en `app.ts`).
-- `CSP` actual permite `'unsafe-inline'` y `'unsafe-eval'` en scripts — un
-  refactor a Astro SSG podría endurecer esto al eliminar React runtime y
-  los plugins `dev` de Replit.
+- `CSP` actual permite `'unsafe-inline'` y `'unsafe-eval'` en scripts —
+  necesarias para React y los plugins `dev` de Replit; se puede endurecer
+  cuando se retiren esos plugins.
 - Fuentes Bogart son la versión `-trial`; cualquier despliegue público
-  estable debería resolverlo antes (fuera del scope técnico, pero a
-  registrar).
+  estable debería resolverlo antes.
 
 ---
 
-## 11. Mapa de impacto para el módulo `/cv`
+## 11. Arquitectura propuesta — módulo `/cv` (delta sobre el estado actual)
 
-Esta sección conecta la arquitectura documentada con el plan refinado en
-`propuesta_optimizacion.md`. **Decisión arquitectónica clave**: no se
-migra el framework. Se añade `/cv` al stack actual como HTML estático
-generado en build desde `cv.md`.
+Esta sección documenta los cambios sobre el estado actual (§§1–10) para
+implementar el plan de `propuesta_optimizacion.md`. **Decisión
+arquitectónica clave**: no se migra el framework. Se añade `/cv` al stack
+actual como HTML estático generado en build desde un `cv.md` SSOT.
+
+### 11.1 Cambios resumidos
+
+| Categoría | Estado actual | Estado propuesto |
+|---|---|---|
+| Ruta `/cv` | No existe (solo PDF estático `Humberto_Bello_Resume.pdf`) | HTML estático servido en `/cv/` desde `dist/public/cv/index.html` |
+| Fuente del CV | PPTX original + PDF exportado a mano | `cv.md` (Markdown + frontmatter Zod-validado) en `artifacts/humberto-bello/content/cv.md` |
+| Build script | `@workspace/scripts` con `check-fonts`, `check-bundle-size`, `push-to-github`, `hello` | + `build-cv.ts` (unified + remark + rehype → HTML estático) |
+| Hook de build | `humberto-bello`: `build` → `vite build` + copia | `humberto-bello`: `prebuild` ejecuta `build-cv.ts` → `vite build` ya copia `public/cv/` |
+| Descarga del CV | `<a download="Humberto_Bello_Resume.pdf">` en `home.tsx` líneas 288, 354 | `<a href="/cv">` (PDF se obtiene desde el botón "Imprimir" dentro de `/cv` vía `window.print()`) |
+| Asset headshot | `attached_assets/headshot-corp_*.{avif,webp,@1x.*}` vía alias `@assets` | `artifacts/humberto-bello/src/assets/images/humberto-bello-headshot.{avif,webp,@1x.*}` (rename semántico) |
+| `sitemap.xml` | Solo `/` | `/` + `/cv` |
+| `api-server`, contrato Orval, i18n, Radix, Framer, Changelog, `server.mjs`, CSP/HSTS, vite plugins | — | **Sin cambios** |
+
+### 11.2 Flujo del nuevo módulo `/cv`
+
+```mermaid
+flowchart LR
+    subgraph Source["Fuente única de verdad"]
+        MD["artifacts/humberto-bello/content/cv.md<br/>frontmatter YAML + Markdown<br/>(validado con Zod)"]
+    end
+
+    subgraph BuildTime["Build time"]
+        BCV["scripts/src/build-cv.ts<br/>@workspace/scripts (tsx)"]
+        UNIFIED["unified + remark-parse<br/>+ remark-rehype + rehype-stringify"]
+        TPL["plantilla HTML:<br/>head SEO (canonical /cv, OG,<br/>JSON-LD Person+Resume),<br/>@font-face Wolknitive,<br/>style screen + print embebido"]
+        BCV --> UNIFIED --> TPL
+    end
+
+    subgraph Output["Salida en repo"]
+        PUB["artifacts/humberto-bello/public/cv/index.html"]
+    end
+
+    subgraph Vite["vite build"]
+        DIST["dist/public/cv/index.html<br/>(copia automatica de public/)"]
+    end
+
+    subgraph Runtime["Runtime"]
+        SRV["server.mjs<br/>Express estatico<br/>(misma CSP/HSTS/COOP que /)"]
+        BR["Browser - GET /cv"]
+        PRT["window.print() -><br/>PDF generado por el navegador<br/>con print CSS"]
+    end
+
+    MD --> BCV
+    TPL --> PUB
+    PUB --> DIST
+    DIST --> SRV
+    SRV --> BR
+    BR -.boton Descargar.-> PRT
+```
+
+### 11.3 Ubicación en el monorepo (delta sobre §2)
+
+```mermaid
+flowchart TB
+    subgraph New["Cambios (en verde conceptualmente)"]
+        direction TB
+        CONT["artifacts/humberto-bello/content/cv.md<br/>SSOT del CV"]
+        ASSETS["artifacts/humberto-bello/src/assets/images/<br/>headshot renombrado (4 archivos)"]
+        BUILD["scripts/src/build-cv.ts<br/>nuevo entry point"]
+        PUBCV["artifacts/humberto-bello/public/cv/index.html<br/>generado en prebuild"]
+        SITE["sitemap.xml<br/>+ entry /cv"]
+    end
+
+    subgraph Touched["Tocados sin reescribir"]
+        HOME["home.tsx<br/>4 imports actualizados (lineas 24-27)<br/>2 hrefs actualizados (lineas 288, 354)"]
+        VC["vite.config.ts<br/>2 regex actualizados (heroPreloadPlugin)"]
+        PKG["humberto-bello/package.json<br/>+ prebuild hook"]
+    end
+
+    subgraph Intact["Sin cambios"]
+        REACT["App.tsx, router, i18n,<br/>Changelog, Radix, Framer,<br/>api-server, api-client-react,<br/>api-spec, api-zod, server.mjs,<br/>CI, mockup-sandbox"]
+    end
+
+    CONT --> BUILD --> PUBCV
+    ASSETS --> HOME
+    HOME --> VC
+    BUILD --> PKG
+    PUBCV -.sirve.-> SITE
+```
+
+### 11.4 Mapeo arquitectura actual → impacto en `/cv`
 
 | Hecho arquitectónico | Implicación para `/cv` |
 |---|---|
