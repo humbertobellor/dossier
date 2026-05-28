@@ -1,23 +1,23 @@
 # Architecture — `dossier`
 
-> Documentación del estado actual del repositorio
+> Documentación de la arquitectura del repositorio
 > [`humbertobellor/dossier`](https://github.com/humbertobellor/dossier) /
 > [`Gmrf18/dossier`](https://github.com/Gmrf18/dossier).
-> **Esta es la línea base sobre la que se evaluará cualquier migración**;
-> mantenerla actualizada en cada fase.
+> Las secciones §§1–10 describen el estado actual; la §11 describe el
+> módulo `/cv` planificado.
 
 ---
 
 ## 1. Resumen de alto nivel
 
-`dossier` es el sitio profesional de Humberto "Bert" Bello. A pesar de aparentar
-ser un sitio estático de una sola página, internamente es un **monorepo pnpm con
-backend propio**: el frontend React consulta un API server en Express que
-proxea las releases públicas del repo `humbertobellor/dossier` en GitHub
-(con caché en memoria y refresh en background) para alimentar el módulo
-"Changelog" del sitio.
+`dossier` es el sitio profesional de Humberto "Bert" Bello. Aunque aparenta
+ser un sitio estático de una sola página, internamente es un **monorepo pnpm
+con backend propio**: el frontend React consulta un API server en Express
+que proxea las releases públicas del repo `humbertobellor/dossier` en
+GitHub (con caché en memoria y refresh en background) para alimentar el
+módulo "Changelog" del sitio.
 
-Stack resumido:
+Stack:
 
 - **Runtime**: Node 24, pnpm workspaces, TypeScript 5.9
 - **Frontend**: React 19 + Vite 7 + Tailwind 4 + Radix UI + Framer Motion + wouter + react-i18next (EN/ES/DE) + TanStack Query
@@ -26,7 +26,7 @@ Stack resumido:
 - **CI**: GitHub Actions con jobs path-filtered (`check-fonts`, `typecheck`, `lint`)
 - **Calidad**: Husky + lint-staged + ESLint 10 + Prettier 3
 
-Filosofía explícita en el repo:
+Principios de diseño:
 - `Security by Design` — `threat_model.md` con categorías STRIDE.
 - **Acciones de CI pineadas a SHA** (no a tags) para evitar supply-chain.
 - **Catálogo central de versiones** en `pnpm-workspace.yaml` (`catalog:`).
@@ -64,9 +64,7 @@ flowchart TB
 ```
 
 Notas:
-- `mockup-sandbox` es un workspace independiente con su propio Radix/Vite —
-  está **fuera del scope del módulo `/cv`** y de la migración a Astro
-  propuesta, salvo que se decida lo contrario explícitamente.
+- `mockup-sandbox` es un workspace independiente con su propio React + Vite + Radix.
 - `lib/api-zod/src/generated/` y `lib/api-client-react/src/generated/` se
   regeneran con `pnpm --filter @workspace/api-spec run codegen`. **No editar
   a mano** los archivos `generated/`.
@@ -138,18 +136,8 @@ sequenceDiagram
     Note over BE: setInterval cada 4 min, warmer en background
 ```
 
-Implicación importante para cualquier migración:
-**el sitio frontend NO es 100% estático** — la sección Changelog requiere un
-backend vivo. Migrarlo a SSG puro implica una de tres opciones:
-
-1. **Mantener `api-server` desplegado** y que Astro/cliente lo consuma en
-   runtime (igual que hoy). Sigue siendo SSG en el HTML inicial; el fetch
-   ocurre tras hidratar.
-2. **Build-time fetch**: en cada build, Astro consulta GitHub e inyecta los
-   releases en el HTML. Pierde frescura (necesita rebuild para reflejar
-   nuevas releases).
-3. **Cliente llama a GitHub directo**: elimina `api-server`, pero expone
-   rate limit anónimo (60 req/hora/IP) y la lógica de caché desaparece.
+El frontend **no es 100% estático**: el módulo Changelog requiere el
+backend vivo (`api-server`) para obtener releases.
 
 ---
 
@@ -329,8 +317,7 @@ Convenciones de CI:
 - Cada `uses:` está pineado a SHA de commit, con el tag legible en comentario.
 - Setup unificado: `pnpm/action-setup@SHA` v4 (pnpm 10.26.1) + `actions/setup-node@SHA` v4 (Node 24).
 - `pnpm install --frozen-lockfile`.
-- **No hay job de `build` ni de `test`** en CI hoy — gap a cubrir si se
-  añaden gates de Lighthouse/Playwright en la Fase 5 bis del plan.
+- **No hay job de `build` ni de `test`** en CI.
 
 Hooks locales (Husky):
 - `pre-commit`: `lint-staged` con reglas en `.lintstagedrc.mjs`.
@@ -378,44 +365,45 @@ Lo que **no** se referencia y por tanto **no debe procesarse**:
 | Pre-commit | Husky + lint-staged | `.husky/`, `.lintstagedrc.mjs` |
 | Modelo STRIDE | `threat_model.md` (Spoofing/Tampering/Info Disclosure/DoS/EoP) | `threat_model.md` |
 
-Brechas identificables (orthogonales al módulo `/cv`, registradas para
-futuro):
+Brechas identificadas:
 - `api-server` **no tiene rate-limit propio** en endpoints públicos
   (`express-rate-limit` está en dependencies pero no se instancia en `app.ts`).
 - `CSP` actual permite `'unsafe-inline'` y `'unsafe-eval'` en scripts —
-  necesarias para React y los plugins `dev` de Replit; se puede endurecer
-  cuando se retiren esos plugins.
-- Fuentes Bogart son la versión `-trial`; cualquier despliegue público
-  estable debería resolverlo antes.
+  necesarias para React y los plugins `dev` de Replit.
+- Fuentes Bogart son la versión `-trial`.
 
 ---
 
-## 11. Arquitectura propuesta — módulo `/cv` (delta sobre el estado actual)
+## 11. Módulo `/cv` (planificado)
 
-Esta sección documenta los cambios sobre el estado actual (§§1–10) para
-implementar el plan de `propuesta_optimizacion.md`. **Decisión
-arquitectónica clave**: no se migra el framework. Se añade `/cv` al stack
-actual como HTML estático generado en build desde un `cv.md` SSOT.
+Ruta `/cv` servida como HTML estático generado en build a partir de un
+`cv.md` SSOT. El stack del sitio (Vite + React + i18n + Radix + Framer +
+Changelog + `api-server` + Orval + `server.mjs`) **permanece sin cambios**.
 
-### 11.1 Cambios resumidos
+### 11.1 Componentes nuevos
 
-| Categoría | Estado actual | Estado propuesto |
+| Componente | Ubicación | Rol |
 |---|---|---|
-| Ruta `/cv` | No existe (solo PDF estático `Humberto_Bello_Resume.pdf`) | HTML estático servido en `/cv/` desde `dist/public/cv/index.html` |
-| Fuente del CV | PPTX original + PDF exportado a mano | `cv.md` (Markdown + frontmatter Zod-validado) en `artifacts/humberto-bello/content/cv.md` |
-| Build script | `@workspace/scripts` con `check-fonts`, `check-bundle-size`, `push-to-github`, `hello` | + `build-cv.ts` (unified + remark + rehype → HTML estático) |
-| Hook de build | `humberto-bello`: `build` → `vite build` + copia | `humberto-bello`: `prebuild` ejecuta `build-cv.ts` → `vite build` ya copia `public/cv/` |
-| Descarga del CV | `<a download="Humberto_Bello_Resume.pdf">` en `home.tsx` líneas 288, 354 | `<a href="/cv">` (PDF se obtiene desde el botón "Imprimir" dentro de `/cv` vía `window.print()`) |
-| Asset headshot | `attached_assets/headshot-corp_*.{avif,webp,@1x.*}` vía alias `@assets` | `artifacts/humberto-bello/src/assets/images/humberto-bello-headshot.{avif,webp,@1x.*}` (rename semántico) |
-| `sitemap.xml` | Solo `/` | `/` + `/cv` |
-| `api-server`, contrato Orval, i18n, Radix, Framer, Changelog, `server.mjs`, CSP/HSTS, vite plugins | — | **Sin cambios** |
+| `cv.md` | `artifacts/humberto-bello/content/cv.md` | SSOT del CV: frontmatter YAML (Zod-validado) + cuerpo Markdown |
+| `build-cv.ts` | `scripts/src/build-cv.ts` (`@workspace/scripts`) | Build script tsx: parsea `cv.md`, compila con `unified` + `remark-parse` + `remark-rehype` + `rehype-stringify`, inyecta `<head>` SEO y CSS print embebido |
+| `cv/index.html` | `artifacts/humberto-bello/public/cv/index.html` | HTML estático generado; copiado a `dist/public/cv/index.html` por `vite build` |
+| `humberto-bello-headshot.{avif,webp,@1x.*}` | `artifacts/humberto-bello/src/assets/images/` | Reubicación + rename semántico del headshot (4 archivos, 350w + 700w) |
 
-### 11.2 Flujo del nuevo módulo `/cv`
+### 11.2 Modificaciones a componentes existentes
+
+| Componente | Cambio |
+|---|---|
+| `home.tsx` | 4 imports del headshot (líneas 24–27) + 2 `<a>` de descarga (líneas 288, 354) → `href="/cv"` |
+| `vite.config.ts` | 2 regex del `heroPreloadPlugin` (líneas 73–77) ajustados al nuevo nombre |
+| `humberto-bello/package.json` | Nuevo hook `prebuild` invoca `build-cv.ts` |
+| `sitemap.xml` | Entrada nueva para `/cv` |
+
+### 11.3 Flujo de datos del módulo
 
 ```mermaid
 flowchart LR
-    subgraph Source["Fuente única de verdad"]
-        MD["artifacts/humberto-bello/content/cv.md<br/>frontmatter YAML + Markdown<br/>(validado con Zod)"]
+    subgraph Source["SSOT"]
+        MD["artifacts/humberto-bello/content/cv.md<br/>frontmatter YAML + Markdown"]
     end
 
     subgraph BuildTime["Build time"]
@@ -447,11 +435,11 @@ flowchart LR
     BR -.boton Descargar.-> PRT
 ```
 
-### 11.3 Ubicación en el monorepo (delta sobre §2)
+### 11.4 Ubicación en el monorepo
 
 ```mermaid
 flowchart TB
-    subgraph New["Cambios (en verde conceptualmente)"]
+    subgraph New["Nuevo"]
         direction TB
         CONT["artifacts/humberto-bello/content/cv.md<br/>SSOT del CV"]
         ASSETS["artifacts/humberto-bello/src/assets/images/<br/>headshot renombrado (4 archivos)"]
@@ -460,7 +448,7 @@ flowchart TB
         SITE["sitemap.xml<br/>+ entry /cv"]
     end
 
-    subgraph Touched["Tocados sin reescribir"]
+    subgraph Touched["Modificados"]
         HOME["home.tsx<br/>4 imports actualizados (lineas 24-27)<br/>2 hrefs actualizados (lineas 288, 354)"]
         VC["vite.config.ts<br/>2 regex actualizados (heroPreloadPlugin)"]
         PKG["humberto-bello/package.json<br/>+ prebuild hook"]
@@ -476,22 +464,6 @@ flowchart TB
     BUILD --> PKG
     PUBCV -.sirve.-> SITE
 ```
-
-### 11.4 Mapeo arquitectura actual → impacto en `/cv`
-
-| Hecho arquitectónico | Implicación para `/cv` |
-|---|---|
-| Performance ya optimizada (Beasties, hero preload, font preload, manual chunks, AVIF+WebP) — §6 | No tocar `/`. Cualquier cambio en home arriesga regresión sobre un perfil ya bueno |
-| `Changelog.tsx` consume `/api/releases` vía Orval/TanStack Query — §4 | Queda intacto. `/cv` es una ruta independiente que no consume API |
-| `server.mjs` aplica CSP/HSTS/COOP a todo `/*` — §5, §10 | `/cv/index.html` hereda las mismas cabeceras al servirse desde el mismo Express; cero configuración extra |
-| SEO completo en `index.html` con JSON-LD `ProfilePage` — §9 | El `/cv/index.html` reutiliza el bloque SEO (canonical propio = `/cv`) y añade un JSON-LD adicional tipo `CreativeWork`/`Resume` |
-| `home.tsx` ya tiene 2 botones de descarga (líneas 288, 354) apuntando a `/Humberto_Bello_Resume.pdf` — §9 | Mantener el PDF estático actual (cambiando luego destino a `/cv` o al PDF regenerado en v2) |
-| `attached_assets/` tiene 1 sola imagen referenciada (headshot, 4 archivos: 350w + 700w) — §9 | Renombrado semántico = mover/renombrar 4 archivos + actualizar 4 imports y 2 regex |
-| `sharp@^0.34.5` en devDeps del root | Disponible si en v2 se quiere prerender PDF con Playwright (que usa Chromium + posiblemente sharp para post-procesar) |
-| `@workspace/scripts` ya existe con tsx + check-fonts + check-bundle-size — §2, §8 | Añadir `scripts/src/build-cv.ts` aquí; encaja con el patrón establecido |
-| `mockup-sandbox` es un workspace aparte | Fuera del scope |
-| Vite ya copia `public/*` a `dist/public/*` (`server.mjs` lo sirve) | Escribir `artifacts/humberto-bello/public/cv/index.html` desde el build script basta para que `/cv` quede servido en producción |
-| CI hoy solo tiene `check-fonts`, `typecheck`, `lint` — §8 | Sumar un job opcional `build-cv-smoke` que ejecute el build script y verifique que `cv/index.html` se genera y valida HTML — pineado a SHA |
 
 ---
 
