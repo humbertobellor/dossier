@@ -26,8 +26,8 @@ generación del PDF, i18n existente, cabeceras de seguridad, manejo de
 | CV actual | `public/Humberto_Bello_Resume.pdf` ya existe (estático, sin ruta `/cv`) | El plan debe enmarcarse como **reemplazar el PDF estático por SSOT en Markdown**, no como "añadir CV donde no había" |
 | SEO | `index.html` ya trae Title/Description/OG/Twitter/canonical + JSON-LD `ProfilePage` completo + `sitemap.xml` + `robots.txt` | Hay que **trasladar el JSON-LD** (el plan solo menciona meta-tags) |
 | Performance | Beasties (critical CSS), Hero AVIF preload plugin, Bogart font preload plugin, manual chunks `vendor-react`/`vendor-i18n`, AVIF+WebP `@1x`/full | Las ganancias de Astro serán **marginales** si se conservan las islas React |
-| Imágenes | `headshot-corp_*.{avif,webp,png}` + variantes `@1x` en `attached_assets/` | `attached_assets/` también contiene PDFs, PPTX, ZIPs y screenshots — **no es solo imágenes** |
-| Procesamiento de imagen | `sharp@^0.34.5` ya está en devDependencies del root | **No hace falta un convertidor externo**; Astro `<Image>` usa sharp internamente |
+| Imágenes en uso real | **Una sola** — `headshot-corp_1776959044728.{avif,webp}` + `@1x.{avif,webp}`, en 2 anchos (**350w** y **700w**, dictados por los `sizes` del `<picture>`). `opengraph.jpg` (meta), `favicon.svg` (vector) y fuentes woff2. Resto de `attached_assets/` (PPTX, PDFs viejos, ZIP, screenshots, jpegs sueltos) **no se referencia desde código** — es source material | El alcance real de la "optimización de imágenes" es **mover y renombrar 4 archivos** y actualizar 4 imports. Las imágenes nuevas que añada `/cv` se procesan por sus propios breakpoints |
+| Procesamiento de imagen | `sharp@^0.34.5` ya está en devDependencies del root | **No hace falta un convertidor externo**; Astro `<Image>` usa sharp internamente. Para una sola imagen ya generada en AVIF+WebP a 1x/2x, basta con moverla y renombrarla |
 | Seguridad | `server.mjs` aplica CSP, HSTS, COOP, X-Frame-Options, cache headers diferenciados | Sin esto, un Astro estático puro pierde las cabeceras; hay que mover la CSP al host o usar adapter Node |
 | i18n | i18next + LanguageDetector con bundle EN inline y ES/DE lazy | **El plan no lo menciona en ninguna fase** — gap crítico |
 | Fuentes | Bogart `-trial` (versión de prueba) | Revisar licencia antes de despliegue público (fuera del scope del plan, pero a registrar) |
@@ -90,18 +90,16 @@ generación del PDF, i18n existente, cabeceras de seguridad, manejo de
 - Adaptar componentes para `<picture>` / `<Image>` con escalas responsive.
 
 **Lo que falla o falta — corregir**
-- **Eliminar la dependencia del servicio externo `image-conversor.netlify.app`.** El repo ya incluye `sharp@^0.34.5`. Usar:
-  - **Astro `<Image>` / `<Picture>`** (procesa con sharp en build, genera AVIF/WebP, srcset y `widths` automáticos), o
-  - Un script local `scripts/optimize-images.ts` con sharp si se necesita fuera de Astro.
-  - Beneficios: reproducible en CI, sin upload de assets a tercero, sin paso manual entre fases.
-- **No mover ciegamente `attached_assets/` a `src/assets/images/`.** Esa carpeta también contiene:
-  - PDFs (`Humberto_Bello_Resume-05-26_*.pdf`, `bertjbello_*.pdf`) — fuente del CV
-  - PPTX (`Humberto_Bello_Dossier_*.pptx`) — material original
-  - ZIP (`Wolknitive_Design_System-handoff_*.zip`)
-  - Screenshots de prueba
-  - Solo las imágenes (`headshot-corp_*`, fotos jpeg/png) deben moverse. El resto se queda o pasa a `docs/source-material/`.
-- Escalas propuestas: `468px` parece typo de `480px`. Además, **Astro deriva las escalas vía `widths=[320,480,768,1080,1440,2160]` en `<Image>`** — no hay que generarlas a mano una a una.
+- **El alcance está muy sobredimensionado.** La auditoría del front muestra que **solo se usa 1 imagen** (`headshot-corp`) en 2 anchos reales (350w + 700w). El resto de `attached_assets/` no se referencia desde código. No hay "optimización masiva" que ejecutar.
+- **Las escalas propuestas (320/468/768/1080/1440/2160) son sobreingeniería para esta imagen.** Los `sizes` actuales del `<picture>` son:
+  - Desktop: `(max-width: 1280px) 50vw, 640px` → cubierto por `350w` (≤768px efectivo) y `700w` (≥768px @2x)
+  - Mobile: `336px` fijo → cubierto por `350w` (1x) y `700w` (2x retina)
+  - Generar 4 escalas extra (480/768/1080/1440/2160) gastaría build time sin que ningún breakpoint las solicite.
+- **`468px` parece typo de `480px`**, pero el punto es moot — ningún `sizes` del layout actual pide esos anchos.
+- **Eliminar la dependencia del servicio externo `image-conversor.netlify.app`.** El repo ya incluye `sharp@^0.34.5`. La imagen actual ya está pre-generada en AVIF+WebP a 1x/2x; solo hay que **mover y renombrar**. Si en el futuro se añade alguna imagen nueva al `/cv`, se procesa con `<Image>` de Astro (sharp en build), no con un convertidor web externo.
+- **NO mover `attached_assets/` en bloque.** Mover **solo los 4 archivos del headshot** que están realmente importados. El resto (PPTX, PDFs viejos, ZIP de design system, screenshots, jpegs no usados) se queda o se mueve a `docs/source-material/` — pero fuera del bundle.
 - Mantener PNG/JPG **fallback** para navegadores legacy en el `<picture>` (Astro lo hace si se pasan `formats: ['avif','webp']` y un `src` fallback).
+- **Regla para nuevas imágenes** (cuando aparezcan en `/cv` u otras secciones): derivar los `widths` del `<Image>` desde los `sizes` reales del layout que las contiene — no aplicar una lista global de 6 escalas por defecto.
 
 ### Fase 5 — Validaciones finales
 
@@ -167,12 +165,28 @@ Sin estas 5 decisiones, las fases siguientes producirán código que habrá que 
 - Implementar `/cv` consumiendo el frontmatter + body del `cv.md`.
 - Implementar generación de PDF según decisión Fase 0 bis (Print CSS o Playwright build).
 
-### Fase 4 bis — Optimización de assets reproducible
+### Fase 4 bis — Reorganización mínima de assets (alcance real)
 
-- Mover **solo imágenes** de `attached_assets/` a `src/assets/images/` con nombres semánticos.
-- Source material no-imagen → `docs/source-material/` (fuera de bundle).
-- Usar `<Image>` / `<Picture>` de Astro con `widths=[320,480,768,1080,1440,2160]`, `formats=['avif','webp']`, `quality=80`, `loading="lazy"` (excepto hero, `eager` + `fetchpriority="high"`).
-- Conservar `opengraph.jpg` y favicon intactos.
+Inventario auditado de assets en uso desde el front:
+
+| Asset | Origen | Destino | Acción |
+|---|---|---|---|
+| `headshot-corp_1776739603885.avif` (700w) | `attached_assets/` | `artifacts/<app>/src/assets/images/humberto-bello-headshot.avif` | mover + renombrar |
+| `headshot-corp_1776739603885.webp` (700w) | `attached_assets/` | `…/humberto-bello-headshot.webp` | mover + renombrar |
+| `headshot-corp_1776739603885@1x.avif` (350w) | `attached_assets/` | `…/humberto-bello-headshot@1x.avif` | mover + renombrar |
+| `headshot-corp_1776739603885@1x.webp` (350w) | `attached_assets/` | `…/humberto-bello-headshot@1x.webp` | mover + renombrar |
+| `opengraph.jpg` | repo root | sin cambios | conservar (caches sociales) |
+| `favicon.svg` | repo root | sin cambios | conservar |
+| `Humberto_Bello_Resume.pdf` | `public/` | reemplazado por el PDF generado desde `cv.md` (Fase 3 bis) | regenerar |
+| `attached_assets/*.{pptx,pdf,zip,png,jpeg}` no listados arriba | `attached_assets/` | `docs/source-material/` o **se quedan** | NO se procesan; no son assets de runtime |
+
+Tareas concretas:
+
+1. **Mover y renombrar 4 archivos** del headshot.
+2. **Actualizar 4 imports** en `src/pages/home.tsx` (líneas 24-27) y los 2 lookups regex en `vite.config.ts` (`heroPreloadPlugin`, líneas 73-77).
+3. Mantener los anchos actuales (**350w + 700w**) — son los que dictan los `sizes` del `<picture>` y cubren mobile (336px ≈ 350) y desktop (640px @1x / @2x ≈ 700).
+4. Para imágenes **nuevas** que aparezcan en `/cv`: usar `<Image>` de Astro con `widths` derivados del layout específico (no una lista global).
+5. **No tocar** PPTX, PDFs históricos, ZIP de design system, screenshots — no se referencian desde código.
 
 ### Fase 5 bis — Validaciones y release
 
@@ -192,7 +206,8 @@ Sin estas 5 decisiones, las fases siguientes producirán código que habrá que 
 | Pérdida de CWV al introducir islas mal calibradas | Media | Alto | Lighthouse CI gate antes de mergear |
 | Romper SEO (perder JSON-LD o canonical) | Media | Alto | Test automatizado de meta-tags en build |
 | PDF generado con fonts rotas (Bogart custom) | Alta | Medio | Embeber fuentes en el PDF o usar Playwright con esperas de `document.fonts.ready` |
-| `attached_assets/` movido entero rompe referencias en docs/scripts | Alta | Bajo-Medio | Mover solo imágenes; auditar `grep -r attached_assets` antes |
+| `attached_assets/` movido entero rompe referencias en docs/scripts | Eliminado | — | Decisión cerrada: solo los 4 archivos del headshot se mueven; el resto se queda |
+| Generar escalas de imagen no usadas por ningún breakpoint | Alta si se sigue el plan original | Bajo (gasta build time, no rompe) | Limitar `widths` a los anchos que dictan los `sizes` reales del layout (350w + 700w para el headshot) |
 | i18n se rompe durante migración | Alta si no se planifica | Alto | Decidir routing i18n en Fase 0 bis, no en Fase 3 |
 | `/clear` entre fases pierde decisiones | Alta | Medio | Ledger explícito + commit por fase con notas en el mensaje |
 | Servicio externo de conversión de imágenes no reproducible | Alta | Medio | Usar `sharp` local (ya está en devDeps) |
@@ -205,8 +220,8 @@ Sin estas 5 decisiones, las fases siguientes producirán código que habrá que 
 documento.** En particular:
 
 1. Cerrar las 5 decisiones de la sección 4 **antes** de tocar código.
-2. Reemplazar el convertidor externo por `sharp` / `<Image>` de Astro.
-3. No mover `attached_assets/` en bloque — auditar primero.
+2. Reemplazar el convertidor externo por `sharp` / `<Image>` de Astro; aplicarlo **solo** a imágenes que efectivamente se rendericen.
+3. Mover **solo los 4 archivos del headshot** de `attached_assets/`; el resto (PPTX, PDFs viejos, ZIP, screenshots) no se procesa. Derivar `widths` de los `sizes` reales del layout (para el headshot actual: 350w + 700w, no las 6 escalas globales del plan original).
 4. Incluir i18n y JSON-LD en el inventario desde Fase 0.
 5. Definir el método de generación de PDF antes de Fase 3.
 6. Añadir gates de Lighthouse, visual regression y a11y en Fase 5.
